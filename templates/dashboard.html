@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block title %}Analytics Dashboard - AspirasiKu{% endblock %}
+{% block content %}
+<section class="container">
+    <div class="page-header" data-aos="fade-up">
+        <h1>Analytics Dashboard</h1>
+        <p>Visualisasi data sentimen aspirasi mahasiswa secara real-time yang dianalisis menggunakan algoritma kecerdasan buatan.</p>
+    </div>
+    <div class="stats-grid" data-aos="fade-up" data-aos-delay="100">
+        <div class="stat-card">
+            <div class="stat-icon purple"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="stat-value" id="dashTotal">{{ stats.total or 0 }}</div>
+            <div class="stat-label" data-tooltip="Total keseluruhan aspirasi mahasiswa yang diproses">Total Data</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fa-solid fa-face-smile"></i></div>
+            <div class="stat-value" id="dashPositif" style="color: var(--positif);">{{ stats.positif or 0 }}</div>
+            <div class="stat-label" data-tooltip="Jumlah opini bersentimen positif">Positif</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon blue"><i class="fa-solid fa-face-meh"></i></div>
+            <div class="stat-value" id="dashNetral" style="color: var(--netral);">{{ stats.netral or 0 }}</div>
+            <div class="stat-label" data-tooltip="Jumlah opini bersentimen netral">Netral</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon red"><i class="fa-solid fa-face-frown"></i></div>
+            <div class="stat-value" id="dashNegatif" style="color: var(--negatif);">{{ stats.negatif or 0 }}</div>
+            <div class="stat-label" data-tooltip="Jumlah opini bersentimen negatif/kritik">Negatif</div>
+        </div>
+    </div>
+    <div class="charts-grid">
+        {% if pie_chart %}
+        <div class="card" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-glow"></div>
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="card-title-icon purple"><i class="fa-solid fa-chart-pie"></i></span>
+                    Distribusi Sentimen
+                </h2>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="min-height:320px;">
+                    <img src="data:image/png;base64,{{ pie_chart }}" alt="Distribusi Sentimen" class="chart-img">
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="card" data-aos="fade-up" data-aos-delay="300">
+            <div class="card-glow"></div>
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="card-title-icon blue"><i class="fa-solid fa-chart-area"></i></span>
+                    Trend Analisis Sentimen
+                </h2>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-header" style="margin-top:64px;margin-bottom:32px;" data-aos="fade-up">
+        <h2>Word Cloud Analytics</h2>
+        <p>Distribusi kata-kata kunci dominan berdasarkan kategori sentimen</p>
+    </div>
+    <div class="wordcloud-grid">
+        {% if wordcloud_positif %}
+        <div class="card" data-aos="fade-up" data-aos-delay="100">
+            <div class="card-glow"></div>
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="card-title-icon green"><i class="fa-solid fa-cloud"></i></span>
+                    Topik Positif
+                </h2>
+            </div>
+            <div class="card-body">
+                <img src="data:image/png;base64,{{ wordcloud_positif }}" alt="Word Cloud Positif" class="chart-img" style="border:1px solid rgba(122,158,126,0.2);">
+            </div>
+        </div>
+        {% endif %}
+        {% if wordcloud_netral %}
+        <div class="card" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-glow"></div>
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="card-title-icon blue"><i class="fa-solid fa-cloud"></i></span>
+                    Topik Netral
+                </h2>
+            </div>
+            <div class="card-body">
+                <img src="data:image/png;base64,{{ wordcloud_netral }}" alt="Word Cloud Netral" class="chart-img" style="border:1px solid rgba(91,98,196,0.2);">
+            </div>
+        </div>
+        {% endif %}
+        {% if wordcloud_negatif %}
+        <div class="card" data-aos="fade-up" data-aos-delay="300">
+            <div class="card-glow"></div>
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="card-title-icon red"><i class="fa-solid fa-cloud"></i></span>
+                    Topik Negatif
+                </h2>
+            </div>
+            <div class="card-body">
+                <img src="data:image/png;base64,{{ wordcloud_negatif }}" alt="Word Cloud Negatif" class="chart-img" style="border:1px solid rgba(201,75,42,0.2);">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const trendData = {{ trend | tojson }};
+        if (trendData && trendData.labels && trendData.labels.length > 0) {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            // Japanese Vintage palette gradients
+            const gradientPositif = ctx.createLinearGradient(0, 0, 0, 380);
+            gradientPositif.addColorStop(0, 'rgba(122, 158, 126, 0.38)');
+            gradientPositif.addColorStop(1, 'rgba(122, 158, 126, 0.0)');
+            const gradientNetral = ctx.createLinearGradient(0, 0, 0, 380);
+            gradientNetral.addColorStop(0, 'rgba(91, 98, 196, 0.38)');
+            gradientNetral.addColorStop(1, 'rgba(91, 98, 196, 0.0)');
+            const gradientNegatif = ctx.createLinearGradient(0, 0, 0, 380);
+            gradientNegatif.addColorStop(0, 'rgba(201, 75, 42, 0.38)');
+            gradientNegatif.addColorStop(1, 'rgba(201, 75, 42, 0.0)');
+            Chart.defaults.font.family = "'DM Sans', sans-serif";
+            Chart.defaults.color = '#756858';
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trendData.labels,
+                    datasets: [
+                        {
+                            label: 'Positif',
+                            data: trendData.positif,
+                            borderColor: '#7A9E7E',
+                            backgroundColor: gradientPositif,
+                            borderWidth: 2.5,
+                            tension: 0.42,
+                            fill: true,
+                            pointBackgroundColor: '#0c0c18',
+                            pointBorderColor: '#7A9E7E',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            pointHoverBackgroundColor: '#7A9E7E'
+                        },
+                        {
+                            label: 'Netral',
+                            data: trendData.netral,
+                            borderColor: '#5B62C4',
+                            backgroundColor: gradientNetral,
+                            borderWidth: 2.5,
+                            tension: 0.42,
+                            fill: true,
+                            pointBackgroundColor: '#0c0c18',
+                            pointBorderColor: '#5B62C4',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            pointHoverBackgroundColor: '#5B62C4'
+                        },
+                        {
+                            label: 'Negatif',
+                            data: trendData.negatif,
+                            borderColor: '#C94B2A',
+                            backgroundColor: gradientNegatif,
+                            borderWidth: 2.5,
+                            tension: 0.42,
+                            fill: true,
+                            pointBackgroundColor: '#0c0c18',
+                            pointBorderColor: '#C94B2A',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            pointHoverBackgroundColor: '#C94B2A'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { intersect: false, mode: 'index' },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 22,
+                                color: '#C8BA9A',
+                                font: { family: "'DM Mono'", size: 11, weight: 500 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(12,12,24,0.97)',
+                            titleFont: { family: "'Playfair Display'", size: 13, weight: 700 },
+                            bodyFont: { family: "'DM Mono'", size: 12 },
+                            titleColor: '#F5EDD8',
+                            bodyColor: '#C8BA9A',
+                            padding: 14,
+                            borderColor: 'rgba(245,237,216,0.09)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            boxPadding: 5
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(245,237,216,0.04)', drawBorder: false },
+                            ticks: { font: { size: 11, family: "'DM Mono'" }, color: '#756858' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(245,237,216,0.05)', drawBorder: false },
+                            ticks: { font: { size: 11, family: "'DM Mono'" }, color: '#756858', stepSize: 1 }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

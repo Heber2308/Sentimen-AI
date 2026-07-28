@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AspirasiKu - Prediksi Sentimen Aspirasi Otomatis{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="bg-mesh">
+        <div class="bg-blur-circle circle-1"></div>
+        <div class="bg-blur-circle circle-2"></div>
+        <div class="bg-blur-circle circle-3"></div>
+    </div>
+    <div class="bg-grid"></div>
+    <div class="bg-waves"></div>
+    <canvas id="confettiCanvas"></canvas>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <div class="brand-logo">
+                    <img src="{{ url_for('static', filename='images/logo-aspirasiku.png') }}" alt="AspirasiKu Logo"
+                        class="brand-logo-img"
+                        onerror="this.style.display='none'; this.parentElement.querySelector('.brand-logo-fallback').style.display='flex';">
+                    <div class="brand-logo-fallback" style="display:none;">
+                        <i class="fa-solid fa-sparkles"></i>
+                    </div>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">Aspirasi<span class="brand-highlight">Ku</span></span>
+                    <span class="brand-tagline">AI Sentiment Analysis</span>
+                </div>
+            </a>
+            <button class="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+            <div class="nav-links">
+                <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                    <i class="fa-solid fa-house"></i> Beranda
+                </a>
+                <a href="/dashboard" class="nav-link {% if request.path == '/dashboard' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </a>
+                <a href="/riwayat" class="nav-link {% if request.path == '/riwayat' %}active{% endif %}">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Riwayat
+                </a>
+                <a href="/metode" class="nav-link {% if request.path == '/metode' %}active{% endif %}">
+                    <i class="fa-solid fa-microscope"></i> Tentang
+                </a>
+            </div>
+        </div>
+    </nav>
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="brand-logo-footer">
+                    <img src="{{ url_for('static', filename='images/logo-aspirasiku.png') }}" alt="AspirasiKu"
+                        class="brand-logo-img-footer"
+                        onerror="this.style.display='none'; this.parentElement.querySelector('.brand-logo-fallback-footer').style.display='flex';">
+                    <div class="brand-logo-fallback-footer" style="display:none;">
+                        <i class="fa-solid fa-sparkles"></i>
+                    </div>
+                </div>
+                <span>Aspirasi<span class="brand-highlight">Ku</span></span>
+            </div>
+            <p class="footer-text">&copy; 2026 AspirasiKu. Dibuat Oleh Kelompok 11.</p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            easing: 'ease-out-cubic',
+            offset: 50
+        });
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

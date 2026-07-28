@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Riwayat Prediksi - AspirasiKu{% endblock %}
+{% block content %}
+<section class="container">
+    <div class="page-header" data-aos="fade-up">
+        <h1>Riwayat<br><em style="color:var(--persimmon-lt);">Analisis</em></h1>
+        <p>Semua hasil prediksi sentimen yang telah dilakukan tersimpan dengan aman untuk keperluan audit dan monitoring.</p>
+    </div>
+    <div class="card" data-aos="fade-up" data-aos-delay="100">
+        <div class="card-glow"></div>
+        <div class="card-header">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
+                <h2 class="card-title">
+                    <span class="card-title-icon purple"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                    Database Aspirasi
+                </h2>
+            </div>
+            <div class="filter-bar" style="margin-top:20px;margin-bottom:0;">
+                <select class="filter-select" id="filterSentimen" onchange="filterTable()">
+                    <option value="semua">Semua Sentimen</option>
+                    <option value="positif">Hanya Positif</option>
+                    <option value="netral">Hanya Netral</option>
+                    <option value="negatif">Hanya Negatif</option>
+                </select>
+                <div style="position:relative;flex:1;">
+                    <i class="fa-solid fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--cream-muted);font-size:13px;pointer-events:none;"></i>
+                    <input type="text" class="filter-input" id="filterSearch"
+                        placeholder="Cari teks aspirasi..."
+                        oninput="filterTable()"
+                        style="padding-left:38px;width:100%;">
+                </div>
+                <a href="/download-hasil" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-download"></i> Export Data
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if prediksi_list %}
+            <div class="table-wrapper">
+                <table class="data-table" id="riwayatTable">
+                    <thead>
+                        <tr>
+                            <th>Timeline</th>
+                            <th>Teks Aspirasi</th>
+                            <th>Sentimen</th>
+                            <th>Insight Keywords</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in prediksi_list %}
+                        <tr data-sentimen="{{ p.sentimen }}">
+                            <td class="td-waktu">
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    <i class="fa-regular fa-clock" style="color:var(--cream-muted);"></i>
+                                    {{ p.waktu.strftime('%d %b %Y, %H:%M') }}
+                                </div>
+                            </td>
+                            <td class="td-teks">
+                                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+                                    <span>{{ p.teks_asli }}</span>
+                                    <button class="btn-copy" onclick="copyToClipboard(this)" data-tooltip="Salin teks">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td><span class="badge badge-{{ p.sentimen }}">{{ p.sentimen.upper() }}</span></td>
+                            <td>
+                                <div class="keywords-container" style="margin-bottom:0;gap:6px;">
+                                    {% if p.kata_kunci %}
+                                        {% set keywords = p.kata_kunci.replace('[', '').replace(']', '').replace("'", "").split(',') %}
+                                        {% for kw in keywords[:3] %}
+                                            {% if kw.strip() %}
+                                            <span class="keyword-tag" style="padding:4px 10px;font-size:11px;">{{ kw.strip() }}</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <span style="color:var(--cream-muted);font-size:12px;font-style:italic;font-family:var(--font-mono);">—</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div id="paginationControls" class="pagination-container"></div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fa-solid fa-database"></i></div>
+                <h3 class="empty-title">Database Kosong</h3>
+                <p class="empty-desc">Belum ada analisis sentimen yang dilakukan. Data akan muncul di sini setelah Anda melakukan prediksi.</p>
+                <a href="/#input-section" class="btn btn-primary">
+                    <i class="fa-solid fa-sparkles"></i> Mulai Analisis Pertama
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

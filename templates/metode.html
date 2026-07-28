@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Metodologi AI - AspirasiKu{% endblock %}
+{% block content %}
+<section class="container">
+    <div class="page-header" data-aos="fade-up">
+        <h1>Metodologi<br><em style="color:var(--persimmon-lt);">Artificial Intelligence</em></h1>
+        <p>Penjelasan teknis arsitektur model dan algoritma Natural Language Processing yang memberdayakan sistem analisis sentimen ini.</p>
+    </div>
+    <div class="card" data-aos="fade-up" data-aos-delay="100" style="margin-bottom:48px;">
+        <div class="card-glow"></div>
+        <div class="card-header" style="text-align:center;">
+            <h2 class="card-title" style="justify-content:center;">
+                <span class="card-title-icon green"><i class="fa-solid fa-bullseye"></i></span>
+                Model Performance Metrics
+            </h2>
+            <p class="card-desc">Evaluasi performa model klasifikasi berdasarkan pengujian Cross-Validation</p>
+        </div>
+        <div class="card-body">
+            <div class="metrics-grid" style="margin-top:20px;">
+                <div class="metric-card" data-tooltip="Persentase prediksi benar dari total keseluruhan prediksi">
+                    <div class="metric-value">{{ "%.2f"|format(akurasi) }}%</div>
+                    <div class="metric-label">Accuracy <i class="fa-solid fa-circle-question" style="font-size:9px;opacity:.5;"></i></div>
+                </div>
+                <div class="metric-card" data-tooltip="Tingkat ketepatan saat model memprediksi sentimen dengan benar">
+                    <div class="metric-value" style="color:var(--persimmon-lt);">{{ "%.2f"|format(precision) }}%</div>
+                    <div class="metric-label">Precision <i class="fa-solid fa-circle-question" style="font-size:9px;opacity:.5;"></i></div>
+                </div>
+                <div class="metric-card" data-tooltip="Seberapa baik model menemukan semua data pada sentimen tertentu">
+                    <div class="metric-value" style="color:var(--netral);">{{ "%.2f"|format(recall) }}%</div>
+                    <div class="metric-label">Recall <i class="fa-solid fa-circle-question" style="font-size:9px;opacity:.5;"></i></div>
+                </div>
+                <div class="metric-card" data-tooltip="Rata-rata harmonik dari nilai Precision dan Recall">
+                    <div class="metric-value" style="color:var(--positif);">{{ "%.2f"|format(f1) }}%</div>
+                    <div class="metric-label">F1-Score <i class="fa-solid fa-circle-question" style="font-size:9px;opacity:.5;"></i></div>
+                </div>
+            </div>
+            {% if total_data > 0 %}
+            <div style="text-align:center;margin-top:26px;">
+                <span class="badge badge-netral" style="font-family:var(--font-mono);padding:9px 22px;font-size:11px;">
+                    <i class="fa-solid fa-database"></i>&nbsp; Dataset Training: {{ total_data }} Samples &nbsp;|&nbsp; 5-Fold Cross Validation
+                </span>
+            </div>
+            {% else %}
+            <p style="font-size:13px;color:var(--text-muted);margin-top:22px;text-align:center;font-family:var(--font-mono);">
+                <i class="fa-solid fa-info-circle"></i> Lakukan proses training model backend untuk memperbarui metrik evaluasi.
+            </p>
+            {% endif %}
+        </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:0;" data-aos="fade-up" data-aos-delay="150">
+        <div class="card" style="margin-bottom:0;">
+            <div class="card-glow"></div>
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="card-title-icon purple"><i class="fa-solid fa-brain"></i></span>
+                    Multinomial Naive Bayes
+                </h2>
+            </div>
+            <div class="card-body">
+                <p style="color:var(--cream-dim);line-height:1.75;margin-bottom:20px;font-size:14px;">
+                    Varian dari Naive Bayes yang dirancang khusus untuk klasifikasi teks dan NLP. Bekerja berdasarkan <strong style="color:var(--cream);">Teorema Bayes</strong> dengan asumsi "naive" bahwa setiap fitur (kata) beroperasi secara independen.
+                </p>
+                <div class="insight-card" style="margin-top:0;flex-direction:column;gap:12px;">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <div class="insight-icon" style="background:rgba(91,98,196,.1);color:var(--netral);"><i class="fa-solid fa-square-root-variable"></i></div>
+                        <h4 style="font-family:var(--font-primary);font-size:15px;color:var(--cream);font-style:italic;">Formula Matematis</h4>
+                    </div>
+                    <div class="formula-block">P(c|d) ∝ P(c) × Π P(w|c)<sup>f</sup></div>
+                    <ul style="font-size:12.5px;color:var(--cream-muted);padding-left:18px;line-height:2;font-family:var(--font-mono);">
+                        <li><strong style="color:var(--cream-dim);">P(c|d)</strong> — Prob. dokumen <em>d</em> masuk kelas <em>c</em></li>
+                        <li><strong style="color:var(--cream-dim);">P(c)</strong> — Prior probability kelas <em>c</em></li>
+                        <li><strong style="color:var(--cream-dim);">P(w|c)</strong> — Prob. kata <em>w</em> muncul di kelas <em>c</em></li>
+                        <li><strong style="color:var(--cream-dim);">f</strong> — Frekuensi kemunculan kata <em>w</em></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card" style="margin-bottom:0;">
+            <div class="card-glow"></div>
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="card-title-icon blue"><i class="fa-solid fa-weight-scale"></i></span>
+                    TF-IDF Vectorization
+                </h2>
+            </div>
+            <div class="card-body">
+                <p style="color:var(--cream-dim);line-height:1.75;margin-bottom:20px;font-size:14px;">
+                    Teks diubah menjadi representasi matriks numerik menggunakan TF-IDF. Tidak hanya menghitung frekuensi kata (TF), tapi juga memberikan <strong style="color:var(--cream);">penalti pada kata umum</strong> yang muncul di hampir semua dokumen (IDF).
+                </p>
+                <div class="insight-card" style="margin-top:0;flex-direction:column;gap:12px;background:linear-gradient(145deg,rgba(91,98,196,.05),rgba(122,158,126,.05));border-color:rgba(91,98,196,.15);">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <div class="insight-icon" style="background:rgba(122,158,126,.1);color:var(--positif);"><i class="fa-solid fa-calculator"></i></div>
+                        <h4 style="font-family:var(--font-primary);font-size:15px;color:var(--cream);font-style:italic;">Mekanisme Pembobotan</h4>
+                    </div>
+                    <div class="formula-block">W(t,d) = TF(t,d) × log(N / DF(t))</div>
+                    <ul style="font-size:12.5px;color:var(--cream-muted);padding-left:18px;line-height:2;font-family:var(--font-mono);">
+                        <li><strong style="color:var(--cream-dim);">TF(t,d)</strong> — Frekuensi term <em>t</em> di dokumen <em>d</em></li>
+                        <li><strong style="color:var(--cream-dim);">N</strong> — Total dokumen dalam korpus</li>
+                        <li><strong style="color:var(--cream-dim);">DF(t)</strong> — Dokumen yang mengandung term <em>t</em></li>
+                        <li><em style="color:var(--sage-lt);">Skor tinggi → kata spesifik, jarang di dokumen lain</em></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:52px;" data-aos="fade-up" data-aos-delay="200">
+        <div class="page-header" style="margin-bottom:32px;">
+            <h2>Alur Pemrosesan Data</h2>
+            <p>Tahapan lengkap dari data mentah hingga model siap digunakan</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-title">Pengumpulan Data</div>
+                <div class="step-desc">Dataset aspirasi mahasiswa dikumpulkan dan dilabeli secara manual menjadi 3 kelas: Positif, Netral, dan Negatif.</div>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-title">Preprocessing NLP</div>
+                <div class="step-desc">Teks melewati tahapan cleaning, tokenizing, stopword removal, dan stemming menggunakan Sastrawi.</div>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-title">Training & Evaluasi</div>
+                <div class="step-desc">Model MNB dilatih dengan TF-IDF features dan dievaluasi menggunakan 5-Fold Cross Validation untuk memastikan generalisasi.</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+{% block title %}AspirasiKu - Prediksi Sentimen Aspirasi Otomatis{% endblock %}
+{% block content %}
+<section class="hero" data-aos="fade-up" data-aos-duration="1000">
+    <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Kelompok 11 &nbsp;·&nbsp; Kecerdasan Buatan
+    </div>
+    <h1 class="hero-title">
+        Memahami Aspirasi<br>Mahasiswa dengan
+        <span class="hero-title-gradient">Artificial Intelligence</span>
+    </h1>
+    <p class="hero-desc">
+        Platform analisis sentimen berbasis <em>Multinomial Naive Bayes</em> untuk memahami opini mahasiswa secara
+        cepat dan memiliki visual yang baik.
+    </p>
+    <div class="hero-buttons">
+        <a href="#input-section" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-sparkles"></i> Mulai Analisis
+        </a>
+        <a href="/dashboard" class="btn btn-secondary btn-lg">
+            <i class="fa-solid fa-chart-pie"></i> Lihat Analytics
+        </a>
+    </div>
+    <div class="hero-stats-bar" data-aos="fade-up" data-aos-delay="300">
+        <div class="hero-stat-item">
+            <div class="hero-stat-num">3</div>
+            <div class="hero-stat-label">Kelas Sentimen</div>
+        </div>
+        <div class="hero-stat-item">
+            <div class="hero-stat-num">NLP</div>
+            <div class="hero-stat-label">Text Processing</div>
+        </div>
+        <div class="hero-stat-item">
+            <div class="hero-stat-num">TF-IDF</div>
+            <div class="hero-stat-label">Vektorisasi</div>
+        </div>
+        <div class="hero-stat-item">
+            <div class="hero-stat-num">MNB</div>
+            <div class="hero-stat-label">Model AI</div>
+        </div>
+    </div>
+</section>
+<section class="container">
+    {% if not model_ready %}
+    <div class="alert alert-error" data-aos="fade-up">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>Sistem AI sedang offline. Silakan pastikan model NLP tersedia.</span>
+    </div>
+    {% endif %}
+    <div id="input-section" class="card" data-aos="fade-up" data-aos-delay="200">
+        <div class="card-glow"></div>
+        <div class="card-header">
+            <h2 class="card-title">
+                <span class="card-title-icon purple"><i class="fa-solid fa-pen-nib"></i></span>
+                Input Teks Aspirasi
+            </h2>
+            <p class="card-desc">Masukkan keluhan, saran, atau opini mahasiswa untuk dianalisis oleh AI.</p>
+        </div>
+        <div class="card-body">
+            <div class="input-card-inner">
+                <div class="input-main">
+                    <div class="input-group">
+                        <textarea id="teksInput" class="input-teks"
+                            placeholder="Tuliskan aspirasi, kritik, atau saran mahasiswa di sini..." rows="7"
+                            maxlength="2000" {% if not model_ready %}disabled{% endif %}></textarea>
+                        <div class="input-footer">
+                            <span id="charCount" class="char-count">0 / 2000 karakter</span>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button id="btnPredict" class="btn btn-primary btn-lg" {% if not model_ready %}disabled{% endif
+                            %}>
+                            <i class="fa-solid fa-magnifying-glass-chart"></i> Analisis Sekarang
+                        </button>
+                        <label for="csvUpload" class="btn btn-secondary btn-lg" style="cursor:pointer;" id="dropZone">
+                            <i class="fa-solid fa-file-csv" id="uploadIcon"></i>
+                            <span id="uploadText">Upload CSV Dataset</span>
+                            <input type="file" id="csvUpload" accept=".csv" hidden>
+                        </label>
+                    </div>
+                </div>
+                <div class="input-aside">
+                    <div class="input-aside-title">Petunjuk Penggunaan</div>
+                    <div class="input-aside-tip">
+                        <strong>Teks Tunggal</strong><br>
+                        Ketik aspirasi mahasiswa di kolom yang tersedia lalu klik <em>Analisis Sekarang</em>.
+                    </div>
+                    <div class="input-aside-tip">
+                        <strong>Upload CSV</strong><br>
+                        Siapkan file CSV dengan kolom <code
+                            style="color:var(--persimmon-lt);font-family:var(--font-mono);font-size:12px;">teks</code>.
+                        Upload atau <em>drag-and-drop</em> file tersebut .
+                    </div>
+                    <div class="input-aside-tip">
+                        <strong>Drag & Drop</strong><br>
+                        Seret file CSV langsung ke area textarea maupun ke tombol upload.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="skeletonSection" class="result-section" style="display:none; margin-top:40px;">
+        <div class="card">
+            <div class="card-glow"></div>
+            <div class="card-header" style="text-align:center;">
+                <h2 class="card-title" style="justify-content:center;">
+                    <span class="card-title-icon"
+                        style="background:rgba(255,255,255,0.03);border-color:transparent;"></span>
+                    <div class="skeleton skeleton-text short" style="margin:0;"></div>
+                </h2>
+            </div>
+            <div class="card-body">
+                <div class="result-main-layout">
+                    <div class="sentimen-display">
+                        <div class="skeleton skeleton-badge"></div>
+                    </div>
+                    <div>
+                        <p class="section-label" style="opacity:0.5;">Loading Distribution</p>
+                        <div class="skeleton skeleton-bar" style="height:28px;"></div>
+                        <div class="skeleton skeleton-bar" style="height:28px;"></div>
+                        <div class="skeleton skeleton-bar" style="height:28px;"></div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:20px;">
+                    <div class="skeleton skeleton-text" style="width:60px;height:30px;border-radius:20px;"></div>
+                    <div class="skeleton skeleton-text" style="width:80px;height:30px;border-radius:20px;"></div>
+                    <div class="skeleton skeleton-text" style="width:50px;height:30px;border-radius:20px;"></div>
+                </div>
+                <div class="insight-card skeleton" style="height:80px;margin-top:18px;border:none;"></div>
+            </div>
+        </div>
+    </div>
+    <div id="resultSection" class="result-section" style="display:none; margin-top:40px;">
+        <div class="card" data-aos="fade-up">
+            <div class="card-glow"></div>
+            <div class="card-header">
+                <h2 class="card-title">
+                    <span class="card-title-icon green"><i class="fa-solid fa-bolt"></i></span>
+                    Hasil Analisis AI
+                </h2>
+            </div>
+            <div class="card-body">
+                <div class="result-main-layout">
+                    <div id="sentimenResult" class="sentimen-display"></div>
+                    <div>
+                        <p class="section-label">Distribusi Probabilitas Model</p>
+                        <div class="probability-group">
+                            <div class="probability-item">
+                                <div class="probability-header">
+                                    <span class="probability-label"><span class="probability-dot positif"></span>
+                                        Positif</span>
+                                    <span class="probability-value" id="probPositif">0%</span>
+                                </div>
+                                <div class="probability-bar">
+                                    <div class="probability-fill positif" id="barPositif"></div>
+                                </div>
+                            </div>
+                            <div class="probability-item">
+                                <div class="probability-header">
+                                    <span class="probability-label"><span class="probability-dot netral"></span>
+                                        Netral</span>
+                                    <span class="probability-value" id="probNetral">0%</span>
+                                </div>
+                                <div class="probability-bar">
+                                    <div class="probability-fill netral" id="barNetral"></div>
+                                </div>
+                            </div>
+                            <div class="probability-item">
+                                <div class="probability-header">
+                                    <span class="probability-label"><span class="probability-dot negatif"></span>
+                                        Negatif</span>
+                                    <span class="probability-value" id="probNegatif">0%</span>
+                                </div>
+                                <div class="probability-bar">
+                                    <div class="probability-fill negatif" id="barNegatif"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:28px;padding-top:24px;border-top:1px solid var(--border-subtle);">
+                    <div style="display:flex;flex-wrap:wrap;gap:36px;">
+                        <div style="flex:1;min-width:260px;">
+                            <p class="section-label">Kata Paling Berpengaruh (TF-IDF)</p>
+                            <div id="kataKunciList" class="keywords-container"></div>
+                        </div>
+                        <div style="flex:1.4;min-width:260px;">
+                            <div class="insight-card">
+                                <div class="insight-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                                <div class="insight-content">
+                                    <h4>Mengapa hasil ini muncul?</h4>
+                                    <p id="insightText">Sistem AI sedang menganalisis korelasi kata...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="csvResultSection" style="display:none; margin-top:40px;">
+        <div class="card" data-aos="fade-up">
+            <div class="card-glow"></div>
+            <div class="card-header">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+                    <h2 class="card-title">
+                        <span class="card-title-icon blue"><i class="fa-solid fa-table"></i></span>
+                        Dataset Analytics
+                    </h2>
+                    <button class="btn btn-secondary btn-sm" onclick="downloadCsvResult()">
+                        <i class="fa-solid fa-download"></i> Export Hasil (CSV)
+                    </button>
+                </div>
+                <p class="card-desc" id="csvTotal" style="margin-top:8px;"></p>
+            </div>
+            <div class="card-body">
+                <div class="table-wrapper">
+                    <table id="csvTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Teks Aspirasi</th>
+                                <th>Sentimen</th>
+                                <th>Positif</th>
+                                <th>Netral</th>
+                                <th>Negatif</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div id="csvPaginationControls" class="pagination-container"></div>
+            </div>
+        </div>
+    </div>
+    <div class="pipeline-section-wrap" data-aos="fade-up">
+        <div class="pipeline-header">
+            <h2>NLP Pipeline Process</h2>
+            <p>Bagaimana AI memproses teks mentah menjadi prediksi sentimen</p>
+        </div>
+        <div class="pipeline-grid">
+            <div class="pipeline-step">
+                <div class="pipeline-step-icon"><i class="fa-solid fa-font"></i></div>
+                <div class="pipeline-step-title">1. Raw Input</div>
+                <div class="pipeline-step-desc">Teks Asli</div>
+            </div>
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="pipeline-step">
+                <div class="pipeline-step-icon"><i class="fa-solid fa-broom"></i></div>
+                <div class="pipeline-step-title">2. Cleaning</div>
+                <div class="pipeline-step-desc">Hapus Noise</div>
+            </div>
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="pipeline-step">
+                <div class="pipeline-step-icon"><i class="fa-solid fa-scissors"></i></div>
+                <div class="pipeline-step-title">3. Tokenizing</div>
+                <div class="pipeline-step-desc">Pecah Kata</div>
+            </div>
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="pipeline-step">
+                <div class="pipeline-step-icon"><i class="fa-solid fa-filter"></i></div>
+                <div class="pipeline-step-title">4. Stopwords</div>
+                <div class="pipeline-step-desc">Filter Umum</div>
+            </div>
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="pipeline-step">
+                <div class="pipeline-step-icon"><i class="fa-solid fa-compress"></i></div>
+                <div class="pipeline-step-title">5. Stemming</div>
+                <div class="pipeline-step-desc">Kata Dasar</div>
+            </div>
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="pipeline-step">
+                <div class="pipeline-step-icon"><i class="fa-solid fa-weight-scale"></i></div>
+                <div class="pipeline-step-title">6. TF-IDF</div>
+                <div class="pipeline-step-desc">Vektorisasi</div>
+            </div>
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="pipeline-step">
+                <div class="pipeline-step-icon"><i class="fa-solid fa-brain"></i></div>
+                <div class="pipeline-step-title">7. MNB Model</div>
+                <div class="pipeline-step-desc">Prediksi Akhir</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
