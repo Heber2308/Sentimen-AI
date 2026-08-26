@@ -1,11 +1,12 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { History, Search, Download, Filter, RefreshCw, Eye, ChevronLeft, ChevronRight, MessageSquare, X } from 'lucide-react'
-import { supabase, getPredictions, PrediksiRecord } from '@/lib/supabase'
+import { History, Search, Download, Calendar, Eye, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { supabase, getPredictions, PrediksiRecord, getCurrentMonthRange } from '@/lib/supabase'
 import { formatWIBDate, formatRelativeWIB, exportToCSV } from '@/lib/utils'
 
 export default function RiwayatPage() {
+  const [period, setPeriod] = useState<'current_month' | 'all'>('current_month')
   const [predictions, setPredictions] = useState<PrediksiRecord[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -16,16 +17,18 @@ export default function RiwayatPage() {
   const [, setTick] = useState(0)
   const pageSize = 20
 
+  const { labelBulan } = getCurrentMonthRange()
+
   const loadPredictions = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await getPredictions(pageSize, page, search, filter)
+      const res = await getPredictions(pageSize, page, search, filter, period)
       setPredictions(res.data)
       setTotalCount(res.total)
     } finally {
       setLoading(false)
     }
-  }, [page, search, filter])
+  }, [page, search, filter, period])
 
   useEffect(() => {
     loadPredictions()
@@ -57,7 +60,7 @@ export default function RiwayatPage() {
 
   const handleExportCSV = async () => {
     // Ambil data untuk diunduh (sampai 1000 baris)
-    const res = await getPredictions(1000, 1, search, filter)
+    const res = await getPredictions(1000, 1, search, filter, period)
     const exportData = res.data.map((p) => ({
       ID: p.id,
       'Teks Asli': p.teks_asli,
@@ -87,17 +90,50 @@ export default function RiwayatPage() {
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Data tersinkronisasi langsung dengan Supabase PostgreSQL secara real-time
+            Data tersinkronisasi langsung dengan Supabase PostgreSQL — reset otomatis setiap awal bulan baru
           </p>
         </div>
 
-        <button
-          onClick={handleExportCSV}
-          className="self-start sm:self-center flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs font-semibold shadow-md transition-all"
-        >
-          <Download className="w-4 h-4 text-emerald-400" />
-          <span>Export CSV ({totalCount.toLocaleString('id-ID')})</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Period Selector Tabs */}
+          <div className="inline-flex p-1 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+            <button
+              onClick={() => {
+                setPeriod('current_month')
+                setPage(1)
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all ${
+                period === 'current_month'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Bulan {labelBulan} (Auto Reset)</span>
+            </button>
+            <button
+              onClick={() => {
+                setPeriod('all')
+                setPage(1)
+              }}
+              className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                period === 'all'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Semua Riwayat
+            </button>
+          </div>
+
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs font-semibold shadow-md transition-all"
+          >
+            <Download className="w-4 h-4 text-emerald-400" />
+            <span>Export CSV ({totalCount.toLocaleString('id-ID')})</span>
+          </button>
+        </div>
       </div>
 
       {/* Filters & Search Toolbar */}
@@ -171,7 +207,7 @@ export default function RiwayatPage() {
               ) : predictions.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-12 text-center text-slate-500 italic">
-                    Tidak ditemukan data riwayat yang cocok.
+                    Tidak ditemukan data riwayat untuk periode ini ({period === 'current_month' ? labelBulan : 'Semua Waktu'}).
                   </td>
                 </tr>
               ) : (

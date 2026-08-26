@@ -28,6 +28,7 @@ export interface StatsData {
   positif: number
   netral: number
   negatif: number
+  periodeLabel?: string
 }
 
 export interface TrendData {
@@ -37,23 +38,46 @@ export interface TrendData {
   negatif: number[]
 }
 
-// Mengambil ringkasan statistik
-export async function getStats(): Promise<StatsData> {
-  try {
-    const { count: total, error: e1 } = await supabase.from('prediksi').select('*', { count: 'exact', head: true })
-    const { count: positif } = await supabase.from('prediksi').select('*', { count: 'exact', head: true }).eq('sentimen', 'positif')
-    const { count: netral } = await supabase.from('prediksi').select('*', { count: 'exact', head: true }).eq('sentimen', 'netral')
-    const { count: negatif } = await supabase.from('prediksi').select('*', { count: 'exact', head: true }).eq('sentimen', 'negatif')
+// Helper untuk mendapatkan rentang waktu bulan berjalan (WIB)
+export function getCurrentMonthRange() {
+  const now = new Date()
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0).toISOString()
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999).toISOString()
+  const labelBulan = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(now)
 
-    if (e1) {
-      console.warn('Supabase stats error:', e1)
+  return { startOfMonth, endOfMonth, labelBulan }
+}
+
+// Mengambil ringkasan statistik (Default: Otomatis Bulan Berjalan)
+export async function getStats(period: 'current_month' | 'all' = 'current_month'): Promise<StatsData> {
+  try {
+    const { startOfMonth, endOfMonth, labelBulan } = getCurrentMonthRange()
+
+    let qTotal = supabase.from('prediksi').select('*', { count: 'exact', head: true })
+    let qPositif = supabase.from('prediksi').select('*', { count: 'exact', head: true }).eq('sentimen', 'positif')
+    let qNetral = supabase.from('prediksi').select('*', { count: 'exact', head: true }).eq('sentimen', 'netral')
+    let qNegatif = supabase.from('prediksi').select('*', { count: 'exact', head: true }).eq('sentimen', 'negatif')
+
+    if (period === 'current_month') {
+      qTotal = qTotal.gte('waktu', startOfMonth).lte('waktu', endOfMonth)
+      qPositif = qPositif.gte('waktu', startOfMonth).lte('waktu', endOfMonth)
+      qNetral = qNetral.gte('waktu', startOfMonth).lte('waktu', endOfMonth)
+      qNegatif = qNegatif.gte('waktu', startOfMonth).lte('waktu', endOfMonth)
     }
+
+    const [{ count: total }, { count: positif }, { count: netral }, { count: negatif }] = await Promise.all([
+      qTotal,
+      qPositif,
+      qNetral,
+      qNegatif,
+    ])
 
     return {
       total: total || 0,
       positif: positif || 0,
       netral: netral || 0,
       negatif: negatif || 0,
+      periodeLabel: period === 'current_month' ? `Bulan ${labelBulan}` : 'Semua Waktu',
     }
   } catch (err) {
     console.error('Failed to get stats:', err)
@@ -62,9 +86,20 @@ export async function getStats(): Promise<StatsData> {
 }
 
 // Mengambil riwayat prediksi terbaru
-export async function getPredictions(limit = 100, page = 1, search = '', sentimentFilter = ''): Promise<{ data: PrediksiRecord[], total: number }> {
+export async function getPredictions(
+  limit = 100,
+  page = 1,
+  search = '',
+  sentimentFilter = '',
+  period: 'current_month' | 'all' = 'current_month'
+): Promise<{ data: PrediksiRecord[]; total: number }> {
   try {
     let query = supabase.from('prediksi').select('*', { count: 'exact' }).order('waktu', { ascending: false })
+
+    if (period === 'current_month') {
+      const { startOfMonth, endOfMonth } = getCurrentMonthRange()
+      query = query.gte('waktu', startOfMonth).lte('waktu', endOfMonth)
+    }
 
     if (search) {
       query = query.ilike('teks_asli', `%${search}%`)
@@ -96,12 +131,16 @@ export async function getPredictions(limit = 100, page = 1, search = '', sentime
 }
 
 // Mengambil data tren untuk chart
-export async function getTrendData(): Promise<TrendData> {
+export async function getTrendData(period: 'current_month' | 'all' = 'current_month'): Promise<TrendData> {
   try {
-    const { data, error } = await supabase
-      .from('prediksi')
-      .select('waktu, sentimen')
-      .order('waktu', { ascending: true })
+    let query = supabase.from('prediksi').select('waktu, sentimen').order('waktu', { ascending: true })
+
+    if (period === 'current_month') {
+      const { startOfMonth, endOfMonth } = getCurrentMonthRange()
+      query = query.gte('waktu', startOfMonth).lte('waktu', endOfMonth)
+    }
+
+    const { data, error } = await query
 
     if (error || !data) {
       return { labels: [], positif: [], netral: [], negatif: [] }
@@ -133,5 +172,34 @@ export async function getTrendData(): Promise<TrendData> {
   } catch (err) {
     console.error('Failed to fetch trend data:', err)
     return { labels: [], positif: [], netral: [], negatif: [] }
+  }
+}
+
+// Reset / Pembersihan Data (Menghapus data sebelum bulan berjalan jika diminta)
+export async function resetPreviousMonthsData(): Promise<boolean> {
+  try {
+    const { startOfMonth } = getCurrentMonthRange()
+    const { error } = await supabase.from('prediksi').delete().lt('waktu', startOfMonth)
+    if (error) {
+      console.warn('Error resetting previous months data:', error)
+      return false
+    }
+    return true
+  } catch {
+    return false
+  }
+}
+
+// Reset Seluruh Data (Manual Full Reset)
+export async function clearAllPredictions(): Promise<boolean> {
+  try {
+    const { error } = await supabase.from('prediksi').delete().gte('id', 0)
+    if (error) {
+      console.warn('Error clearing predictions:', error)
+      return false
+    }
+    return true
+  } catch {
+    return false
   }
 }
