@@ -109,7 +109,7 @@ export async function getTrendData(): Promise<TrendData> {
 
     const trendMap: Record<string, { positif: number; netral: number; negatif: number }> = {}
 
-    data.forEach((item) => {
+    data.forEach((item: { waktu?: string; sentimen?: string }) => {
       if (!item.waktu) return
       const date = new Date(item.waktu)
       // Format: DD MMM
@@ -117,8 +117,9 @@ export async function getTrendData(): Promise<TrendData> {
       if (!trendMap[label]) {
         trendMap[label] = { positif: 0, netral: 0, negatif: 0 }
       }
-      if (item.sentimen === 'positif' || item.sentimen === 'netral' || item.sentimen === 'negatif') {
-        trendMap[label][item.sentimen]++
+      const s = item.sentimen
+      if (s === 'positif' || s === 'netral' || s === 'negatif') {
+        trendMap[label][s]++
       }
     })
 
