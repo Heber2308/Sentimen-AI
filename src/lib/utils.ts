@@ -6,13 +6,44 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Helper untuk mem-parsing string tanggal dari Supabase/DB dengan aman.
+ * Jika string berupa ISO UTC tanpa penanda timezone (contoh: "2026-08-26T14:13:57.194" atau "2026-08-26 14:13:57"),
+ * fungsi ini memastikan dibaca sebagai UTC (ditambahkan 'Z') agar waktu konversi ke WIB (UTC+7) akurat.
+ */
+export function parseDateSafe(dateInput: string | Date | null | undefined): Date | null {
+  if (!dateInput) return null
+  if (dateInput instanceof Date) {
+    return isNaN(dateInput.getTime()) ? null : dateInput
+  }
+
+  let str = String(dateInput).trim()
+  if (!str) return null
+
+  // Jika berupa timestamp angka (ms)
+  if (/^\d+$/.test(str)) {
+    const d = new Date(Number(str))
+    return isNaN(d.getTime()) ? null : d
+  }
+
+  // Format ISO / database timestamp tanpa zona waktu:
+  // Supabase/PostgreSQL 'timestamp without time zone' mengembalikan UTC tanpa akhiran Z.
+  // JavaScript default-nya menganggap format tersebut sebagai local time jika tanpa Z.
+  if (!str.endsWith('Z') && !str.includes('+') && !str.includes('GMT')) {
+    str = str.replace(' ', 'T') + 'Z'
+  }
+
+  const d = new Date(str)
+  return isNaN(d.getTime()) ? null : d
+}
+
+/**
  * Format tanggal ke Waktu Indonesia Barat (WIB)
  */
 export function formatWIBDate(dateInput: string | Date | null | undefined): string {
   if (!dateInput) return '-'
   try {
-    const d = new Date(dateInput)
-    if (isNaN(d.getTime())) return String(dateInput)
+    const d = parseDateSafe(dateInput)
+    if (!d) return String(dateInput)
 
     return new Intl.DateTimeFormat('id-ID', {
       timeZone: 'Asia/Jakarta',
@@ -35,13 +66,15 @@ export function formatWIBDate(dateInput: string | Date | null | undefined): stri
 export function formatRelativeWIB(dateInput: string | Date | null | undefined): string {
   if (!dateInput) return '-'
   try {
-    const now = new Date().getTime()
-    const target = new Date(dateInput).getTime()
-    if (isNaN(target)) return '-'
+    const d = parseDateSafe(dateInput)
+    if (!d) return '-'
+
+    const now = Date.now()
+    const target = d.getTime()
 
     const diffSec = Math.floor((now - target) / 1000)
 
-    if (diffSec < 5) return 'Baru saja'
+    if (diffSec < 0 || diffSec < 10) return 'Baru saja'
     if (diffSec < 60) return `${diffSec} detik lalu`
 
     const diffMin = Math.floor(diffSec / 60)

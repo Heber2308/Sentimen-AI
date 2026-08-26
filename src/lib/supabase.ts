@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { parseDateSafe } from './utils'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://zaayyotazglzuiyniwwu.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphYXl5b3RhemdsenVpeW5pd3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTY5NjksImV4cCI6MjEwMzI5Mjk2OX0.hNWwyo2Un_stpSCcPTVWRXJc0GNZJrQ2g7jFPs_siI4'
@@ -150,9 +151,14 @@ export async function getTrendData(period: 'current_month' | 'all' = 'current_mo
 
     data.forEach((item: { waktu?: string; sentimen?: string }) => {
       if (!item.waktu) return
-      const date = new Date(item.waktu)
-      // Format: DD MMM
-      const label = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
+      const date = parseDateSafe(item.waktu)
+      if (!date) return
+      // Format: DD MMM (WIB)
+      const label = date.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        timeZone: 'Asia/Jakarta',
+      })
       if (!trendMap[label]) {
         trendMap[label] = { positif: 0, netral: 0, negatif: 0 }
       }
