@@ -75,7 +75,7 @@
                 </h2>
             </div>
             <div class="card-body">
-                <img src="data:image/png;base64,{{ wordcloud_positif }}" alt="Word Cloud Positif" class="chart-img" style="border:1px solid rgba(122,158,126,0.2);">
+                <img src="data:image/png;base64,{{ wordcloud_positif }}" alt="Word Cloud Positif" class="chart-img" style="border:1px solid rgba(0,223,216,0.2);">
             </div>
         </div>
         {% endif %}
@@ -89,7 +89,7 @@
                 </h2>
             </div>
             <div class="card-body">
-                <img src="data:image/png;base64,{{ wordcloud_netral }}" alt="Word Cloud Netral" class="chart-img" style="border:1px solid rgba(91,98,196,0.2);">
+                <img src="data:image/png;base64,{{ wordcloud_netral }}" alt="Word Cloud Netral" class="chart-img" style="border:1px solid rgba(0,112,243,0.2);">
             </div>
         </div>
         {% endif %}
@@ -103,7 +103,7 @@
                 </h2>
             </div>
             <div class="card-body">
-                <img src="data:image/png;base64,{{ wordcloud_negatif }}" alt="Word Cloud Negatif" class="chart-img" style="border:1px solid rgba(201,75,42,0.2);">
+                <img src="data:image/png;base64,{{ wordcloud_negatif }}" alt="Word Cloud Negatif" class="chart-img" style="border:1px solid rgba(255,0,128,0.2);">
             </div>
         </div>
         {% endif %}
@@ -136,47 +136,47 @@
                         {
                             label: 'Positif',
                             data: trendData.positif,
-                            borderColor: '#7A9E7E',
+                            borderColor: '#00DFD8',
                             backgroundColor: gradientPositif,
                             borderWidth: 2.5,
                             tension: 0.42,
                             fill: true,
-                            pointBackgroundColor: '#0c0c18',
-                            pointBorderColor: '#7A9E7E',
+                            pointBackgroundColor: '#050505',
+                            pointBorderColor: '#00DFD8',
                             pointBorderWidth: 2,
                             pointRadius: 4,
                             pointHoverRadius: 7,
-                            pointHoverBackgroundColor: '#7A9E7E'
+                            pointHoverBackgroundColor: '#00DFD8'
                         },
                         {
                             label: 'Netral',
                             data: trendData.netral,
-                            borderColor: '#5B62C4',
+                            borderColor: '#0070F3',
                             backgroundColor: gradientNetral,
                             borderWidth: 2.5,
                             tension: 0.42,
                             fill: true,
-                            pointBackgroundColor: '#0c0c18',
-                            pointBorderColor: '#5B62C4',
+                            pointBackgroundColor: '#050505',
+                            pointBorderColor: '#0070F3',
                             pointBorderWidth: 2,
                             pointRadius: 4,
                             pointHoverRadius: 7,
-                            pointHoverBackgroundColor: '#5B62C4'
+                            pointHoverBackgroundColor: '#0070F3'
                         },
                         {
                             label: 'Negatif',
                             data: trendData.negatif,
-                            borderColor: '#C94B2A',
+                            borderColor: '#FF0080',
                             backgroundColor: gradientNegatif,
                             borderWidth: 2.5,
                             tension: 0.42,
                             fill: true,
-                            pointBackgroundColor: '#0c0c18',
-                            pointBorderColor: '#C94B2A',
+                            pointBackgroundColor: '#050505',
+                            pointBorderColor: '#FF0080',
                             pointBorderWidth: 2,
                             pointRadius: 4,
                             pointHoverRadius: 7,
-                            pointHoverBackgroundColor: '#C94B2A'
+                            pointHoverBackgroundColor: '#FF0080'
                         }
                     ]
                 },

@@ -25,23 +25,39 @@ from collections import Counter
 from wordcloud import WordCloud
 import base64
 app = Flask(__name__)
+is_vercel = os.environ.get('VERCEL') == '1' or os.environ.get('VERCEL_ENV') is not None or os.environ.get('NOW_REGION') is not None
+
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sentimen-ai-secret-key-2024')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sentimen.db'
+if is_vercel:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/sentimen.db'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sentimen.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 db = SQLAlchemy(app)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
-UPLOAD_DIR = os.path.join(BASE_DIR, 'uploads')
+UPLOAD_DIR = '/tmp/uploads' if is_vercel else os.path.join(BASE_DIR, 'uploads')
 MODEL_PATH = os.path.join(DATA_DIR, 'model_sentimen.pkl')
 VECTORIZER_PATH = os.path.join(DATA_DIR, 'vectorizer.pkl')
 LABEL_MAPPING_PATH = os.path.join(DATA_DIR, 'label_mapping.pkl')
 PREPROCESS_CONFIG_PATH = os.path.join(DATA_DIR, 'preprocess_config.pkl')
+
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-nltk.download('punkt_tab', quiet=True)
-nltk.download('punkt', quiet=True)
-nltk.download('stopwords', quiet=True)
+
+if is_vercel:
+    nltk_data_dir = '/tmp/nltk_data'
+    os.makedirs(nltk_data_dir, exist_ok=True)
+    nltk.data.path.append(nltk_data_dir)
+    nltk.download('punkt_tab', download_dir=nltk_data_dir, quiet=True)
+    nltk.download('punkt', download_dir=nltk_data_dir, quiet=True)
+    nltk.download('stopwords', download_dir=nltk_data_dir, quiet=True)
+else:
+    nltk.download('punkt_tab', quiet=True)
+    nltk.download('punkt', quiet=True)
+    nltk.download('stopwords', quiet=True)
 class Prediksi(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     teks_asli = db.Column(db.Text, nullable=False)
