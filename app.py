@@ -36,6 +36,15 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import base64
 
+try:
+    import psycopg2.extensions
+    psycopg2.extensions.register_adapter(np.float64, psycopg2.extensions.Float)
+    psycopg2.extensions.register_adapter(np.float32, psycopg2.extensions.Float)
+    psycopg2.extensions.register_adapter(np.int64, psycopg2.extensions.AsIs)
+    psycopg2.extensions.register_adapter(np.int32, psycopg2.extensions.AsIs)
+except Exception:
+    pass
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 is_vercel = os.environ.get('VERCEL') == '1' or os.environ.get('VERCEL_ENV') is not None or os.environ.get('NOW_REGION') is not None
@@ -57,6 +66,8 @@ db_url = os.environ.get('DATABASE_URL')
 if db_url and '[YOUR_PASSWORD]' not in db_url and '[PASSWORD]' not in db_url:
     if db_url.startswith('postgres://'):
         db_url = db_url.replace('postgres://', 'postgresql://', 1)
+    if 'sslmode=' not in db_url and ('supabase.co' in db_url or 'supabase.com' in db_url or 'pooler.supabase.com' in db_url):
+        db_url += ('&' if '?' in db_url else '?') + 'sslmode=require'
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'pool_pre_ping': True,
@@ -286,17 +297,17 @@ def predict_sentiment(teks):
             pass
     try:
         pred_label = model.predict([teks_bersih])[0]
-        sentimen = label_mapping[pred_label]
+        sentimen = str(label_mapping[pred_label])
         proba = model.predict_proba([teks_bersih])[0]
         prob_dict = {}
         for i, p in enumerate(proba):
-            prob_dict[label_mapping[i]] = round(p * 100, 1)
-        kata_kunci = ekstrak_kata_kunci(teks_bersih, original_tokens)
+            prob_dict[str(label_mapping[i])] = float(round(float(p) * 100, 1))
+        kata_kunci = [str(k) for k in ekstrak_kata_kunci(teks_bersih, original_tokens)]
         return {
             'sentimen': sentimen,
             'probabilitas': prob_dict,
             'kata_kunci': kata_kunci,
-            'teks_bersih': teks_bersih
+            'teks_bersih': str(teks_bersih)
         }, None
     except Exception as e:
         return None, f"Error prediksi: {str(e)}"
@@ -311,10 +322,10 @@ def ekstrak_kata_kunci(teks_bersih, original_tokens):
         kata_kunci = []
         for idx in top_indices:
             if feature_array[idx] > 0:
-                kata_kunci.append(feature_names[idx])
+                kata_kunci.append(str(feature_names[idx]))
         return kata_kunci[:6]
     except Exception:
-        return list(set(original_tokens))[:5]
+        return [str(tok) for tok in list(set(original_tokens))[:5]]
 def get_stats():
     total = Prediksi.query.count()
     positif = Prediksi.query.filter_by(sentimen='positif').count()
@@ -415,18 +426,22 @@ def predict():
     hasil, error = predict_sentiment(teks)
     if error:
         return jsonify({'error': error}), 500
-    prediksi = Prediksi(
-        teks_asli=teks,
-        teks_bersih=hasil['teks_bersih'],
-        sentimen=hasil['sentimen'],
-        prob_positif=hasil['probabilitas'].get('positif', 0),
-        prob_netral=hasil['probabilitas'].get('netral', 0),
-        prob_negatif=hasil['probabilitas'].get('negatif', 0),
-        kata_kunci=str(hasil['kata_kunci']),
-        waktu=get_wib_time()
-    )
-    db.session.add(prediksi)
-    db.session.commit()
+    try:
+        prediksi = Prediksi(
+            teks_asli=str(teks),
+            teks_bersih=str(hasil['teks_bersih']),
+            sentimen=str(hasil['sentimen']),
+            prob_positif=float(hasil['probabilitas'].get('positif', 0.0)),
+            prob_netral=float(hasil['probabilitas'].get('netral', 0.0)),
+            prob_negatif=float(hasil['probabilitas'].get('negatif', 0.0)),
+            kata_kunci=json.dumps(hasil['kata_kunci'], ensure_ascii=False),
+            waktu=get_wib_time()
+        )
+        db.session.add(prediksi)
+        db.session.commit()
+    except Exception as db_err:
+        db.session.rollback()
+        print(f"DB save warning: {db_err}")
     return jsonify(hasil)
 @app.route('/upload-csv', methods=['POST'])
 def upload_csv():
@@ -453,25 +468,32 @@ def upload_csv():
             if len(teks.strip()) >= 5:
                 hasil, _ = predict_sentiment(teks.strip())
                 if hasil:
-                    prediksi = Prediksi(
-                        teks_asli=teks.strip(),
-                        teks_bersih=hasil['teks_bersih'],
-                        sentimen=hasil['sentimen'],
-                        prob_positif=hasil['probabilitas'].get('positif', 0),
-                        prob_netral=hasil['probabilitas'].get('netral', 0),
-                        prob_negatif=hasil['probabilitas'].get('negatif', 0),
-                        kata_kunci=str(hasil['kata_kunci']),
-                        waktu=get_wib_time()
-                    )
-                    db.session.add(prediksi)
+                    try:
+                        prediksi = Prediksi(
+                            teks_asli=str(teks.strip()),
+                            teks_bersih=str(hasil['teks_bersih']),
+                            sentimen=str(hasil['sentimen']),
+                            prob_positif=float(hasil['probabilitas'].get('positif', 0.0)),
+                            prob_netral=float(hasil['probabilitas'].get('netral', 0.0)),
+                            prob_negatif=float(hasil['probabilitas'].get('negatif', 0.0)),
+                            kata_kunci=json.dumps(hasil['kata_kunci'], ensure_ascii=False),
+                            waktu=get_wib_time()
+                        )
+                        db.session.add(prediksi)
+                    except Exception:
+                        pass
                     hasil_list.append({
                         'teks': teks.strip()[:100],
                         'sentimen': hasil['sentimen'],
-                        'positif': hasil['probabilitas'].get('positif', 0),
-                        'netral': hasil['probabilitas'].get('netral', 0),
-                        'negatif': hasil['probabilitas'].get('negatif', 0)
+                        'positif': float(hasil['probabilitas'].get('positif', 0.0)),
+                        'netral': float(hasil['probabilitas'].get('netral', 0.0)),
+                        'negatif': float(hasil['probabilitas'].get('negatif', 0.0))
                     })
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as db_err:
+            db.session.rollback()
+            print(f"DB batch save warning: {db_err}")
         return jsonify({
             'success': True,
             'total': len(hasil_list),
