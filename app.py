@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_file, Response
+from flask import Flask, render_template, request, jsonify, Response
 from flask_sqlalchemy import SQLAlchemy
 from wordcloud import WordCloud
 import pytz
@@ -20,10 +20,8 @@ from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import seaborn as sns
-from collections import Counter
-from wordcloud import WordCloud
 import base64
+
 app = Flask(__name__)
 is_vercel = os.environ.get('VERCEL') == '1' or os.environ.get('VERCEL_ENV') is not None or os.environ.get('NOW_REGION') is not None
 
@@ -47,17 +45,21 @@ PREPROCESS_CONFIG_PATH = os.path.join(DATA_DIR, 'preprocess_config.pkl')
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-if is_vercel:
-    nltk_data_dir = '/tmp/nltk_data'
-    os.makedirs(nltk_data_dir, exist_ok=True)
-    nltk.data.path.append(nltk_data_dir)
-    nltk.download('punkt_tab', download_dir=nltk_data_dir, quiet=True)
-    nltk.download('punkt', download_dir=nltk_data_dir, quiet=True)
-    nltk.download('stopwords', download_dir=nltk_data_dir, quiet=True)
-else:
-    nltk.download('punkt_tab', quiet=True)
-    nltk.download('punkt', quiet=True)
-    nltk.download('stopwords', quiet=True)
+try:
+    if is_vercel:
+        nltk_data_dir = '/tmp/nltk_data'
+        os.makedirs(nltk_data_dir, exist_ok=True)
+        nltk.data.path.append(nltk_data_dir)
+        nltk.download('punkt_tab', download_dir=nltk_data_dir, quiet=True)
+        nltk.download('punkt', download_dir=nltk_data_dir, quiet=True)
+        nltk.download('stopwords', download_dir=nltk_data_dir, quiet=True)
+    else:
+        nltk.download('punkt_tab', quiet=True)
+        nltk.download('punkt', quiet=True)
+        nltk.download('stopwords', quiet=True)
+except Exception as e:
+    print(f"NLTK download notice: {e}")
+
 class Prediksi(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     teks_asli = db.Column(db.Text, nullable=False)
@@ -68,13 +70,16 @@ class Prediksi(db.Model):
     prob_negatif = db.Column(db.Float, default=0)
     kata_kunci = db.Column(db.Text, nullable=True)
     waktu = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Asia/Jakarta')))
+
 with app.app_context():
     db.create_all()
+
 model = None
 vectorizer = None
 label_mapping = None
 preprocess_config = {'use_stemming': True}
 model_loaded = False
+
 def load_model():
     global model, vectorizer, label_mapping, preprocess_config, model_loaded
     try:
@@ -89,10 +94,20 @@ def load_model():
     except Exception as e:
         print(f"Error loading model: {e}")
     return False
+
 load_model()
-factory = StemmerFactory()
-stemmer = factory.create_stemmer()
-stopwords_id = set(stopwords.words('indonesian'))
+
+try:
+    factory = StemmerFactory()
+    stemmer = factory.create_stemmer()
+except Exception as e:
+    print(f"Stemmer init notice: {e}")
+    stemmer = None
+
+try:
+    stopwords_id = set(stopwords.words('indonesian'))
+except Exception:
+    stopwords_id = set()
 kata_penting = {
     'tidak', 'bukan', 'belum', 'jangan', 'sangat', 'sekali', 'lebih', 'kurang', 'paling', 'banget',
     'baik', 'buruk', 'bagus', 'jelek', 'puas', 'kecewa', 'senang', 'sedih', 'marah', 'benci', 'suka',
@@ -262,7 +277,7 @@ def ekstrak_kata_kunci(teks_bersih, original_tokens):
             if feature_array[idx] > 0:
                 kata_kunci.append(feature_names[idx])
         return kata_kunci[:6]
-    except:
+    except Exception:
         return list(set(original_tokens))[:5]
 def get_stats():
     total = Prediksi.query.count()
@@ -344,7 +359,7 @@ def generate_pie_chart():
     img = io.BytesIO()
     plt.savefig(img, format='PNG', dpi=150, bbox_inches='tight', transparent=True, facecolor=fig.get_facecolor())
     img.seek(0)
-    plt.close()
+    plt.close(fig)
     return base64.b64encode(img.getvalue()).decode()
 @app.route('/')
 def index():
@@ -515,7 +530,7 @@ def metode():
                 recall = round(float(last.get('recall', akurasi)), 2)
                 f1 = round(float(last.get('f1_score', akurasi)), 2)
                 total_data = int(last.get('total_data', 0))
-        except:
+        except Exception:
             pass
     return render_template('metode.html',
                          akurasi=akurasi,
