@@ -41,10 +41,18 @@ app = Flask(
 )
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sentimen-ai-secret-key-2024')
-if is_vercel:
+
+# Database URI: Mendukung Cloud PostgreSQL (Supabase/Neon) atau fallback ke SQLite
+db_url = os.environ.get('DATABASE_URL')
+if db_url:
+    if db_url.startswith('postgres://'):
+        db_url = db_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+elif is_vercel:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/sentimen.db'
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sentimen.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 db = SQLAlchemy(app)
