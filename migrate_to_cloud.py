@@ -3,12 +3,27 @@ Script untuk menyalin data riwayat dari SQLite lokal (instance/sentimen.db)
 ke Cloud Database PostgreSQL (Supabase / Neon).
 
 Cara penggunaan:
-  python migrate_to_cloud.py "postgresql://user:password@host/dbname"
+  python migrate_to_cloud.py
+  atau
+  python migrate_to_cloud.py "postgresql://postgres:password@host/dbname"
 """
 import sys
 import os
 import sqlite3
 from datetime import datetime
+
+# Pastikan UTF-8 support di Windows console
+if sys.platform.startswith('win'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 def migrate():
     target_url = None
@@ -17,10 +32,10 @@ def migrate():
     else:
         target_url = os.environ.get('DATABASE_URL')
 
-    if not target_url:
-        print("❌ Error: Harap masukkan URL koneksi database PostgreSQL!")
-        print("Contoh:")
-        print('  python migrate_to_cloud.py "postgresql://postgres:password@db.supabase.co:5432/postgres"')
+    if not target_url or '[YOUR_PASSWORD]' in target_url or '[PASSWORD]' in target_url:
+        print("[!] Error: Harap masukkan URL koneksi database PostgreSQL dengan password yang benar!")
+        print("Pastikan Anda sudah mengganti [YOUR_PASSWORD] dengan password database Supabase Anda di file .env atau jalankan:")
+        print('  python migrate_to_cloud.py "postgresql://postgres.zaayyotazglzuiyniwwu:PASSWORD_ANDA@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"')
         return
 
     if target_url.startswith('postgres://'):

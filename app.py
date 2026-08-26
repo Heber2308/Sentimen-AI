@@ -16,6 +16,12 @@ import warnings
 warnings.filterwarnings('ignore')
 
 try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+try:
     from nltk.tokenize import TreebankWordTokenizer
     _tokenizer = TreebankWordTokenizer()
     def tokenize_words(text):
@@ -42,12 +48,20 @@ app = Flask(
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sentimen-ai-secret-key-2024')
 
+# Konfigurasi Supabase REST / API (opsional)
+app.config['SUPABASE_URL'] = os.environ.get('SUPABASE_URL', '')
+app.config['SUPABASE_KEY'] = os.environ.get('SUPABASE_KEY', os.environ.get('SUPABASE_ANON_KEY', ''))
+
 # Database URI: Mendukung Cloud PostgreSQL (Supabase/Neon) atau fallback ke SQLite
 db_url = os.environ.get('DATABASE_URL')
-if db_url:
+if db_url and '[YOUR_PASSWORD]' not in db_url and '[PASSWORD]' not in db_url:
     if db_url.startswith('postgres://'):
         db_url = db_url.replace('postgres://', 'postgresql://', 1)
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+    }
 elif is_vercel:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/sentimen.db'
 else:
