@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}AspirasiKu - Prediksi Sentimen Aspirasi Otomatis{% endblock %}</title>
+    <title>{% block title %}Suara Kampus - Pusat Aspirasi Sivitas Akademika{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -26,7 +26,7 @@
         <div class="nav-container">
             <a href="/" class="nav-brand">
                 <div class="brand-logo">
-                    <img src="{{ url_for('static', filename='images/logo-aspirasiku.png') }}" alt="AspirasiKu Logo"
+                    <img src="{{ url_for('static', filename='images/logo-aspirasiku.png') }}" alt="Suara Kampus"
                         class="brand-logo-img"
                         onerror="this.style.display='none'; this.parentElement.querySelector('.brand-logo-fallback').style.display='flex';">
                     <div class="brand-logo-fallback" style="display:none;">
@@ -34,8 +34,8 @@
                     </div>
                 </div>
                 <div class="brand-text">
-                    <span class="brand-name">Aspirasi<span class="brand-highlight">Ku</span></span>
-                    <span class="brand-tagline">AI Sentiment Analysis</span>
+                    <span class="brand-name">Suara<span class="brand-highlight">Kampus</span></span>
+                    <span class="brand-tagline">Pusat Aspirasi Sivitas Akademika</span>
                 </div>
             </a>
             <button class="menu-toggle"><i class="fa-solid fa-bars"></i></button>
@@ -44,13 +44,13 @@
                     <i class="fa-solid fa-house"></i> Beranda
                 </a>
                 <a href="/dashboard" class="nav-link {% if request.path == '/dashboard' %}active{% endif %}">
-                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                    <i class="fa-solid fa-chart-pie"></i> Ringkasan
                 </a>
                 <a href="/riwayat" class="nav-link {% if request.path == '/riwayat' %}active{% endif %}">
-                    <i class="fa-solid fa-clock-rotate-left"></i> Riwayat
+                    <i class="fa-solid fa-clock-rotate-left"></i> Arsip Aspirasi
                 </a>
                 <a href="/metode" class="nav-link {% if request.path == '/metode' %}active{% endif %}">
-                    <i class="fa-solid fa-microscope"></i> Tentang
+                    <i class="fa-solid fa-microscope"></i> Tentang Sistem
                 </a>
             </div>
         </div>
@@ -62,16 +62,16 @@
         <div class="footer-container">
             <div class="footer-brand">
                 <div class="brand-logo-footer">
-                    <img src="{{ url_for('static', filename='images/logo-aspirasiku.png') }}" alt="AspirasiKu"
+                    <img src="{{ url_for('static', filename='images/logo-aspirasiku.png') }}" alt="Suara Kampus"
                         class="brand-logo-img-footer"
                         onerror="this.style.display='none'; this.parentElement.querySelector('.brand-logo-fallback-footer').style.display='flex';">
                     <div class="brand-logo-fallback-footer" style="display:none;">
                         <i class="fa-solid fa-sparkles"></i>
                     </div>
                 </div>
-                <span>Aspirasi<span class="brand-highlight">Ku</span></span>
+                <span>Suara<span class="brand-highlight">Kampus</span></span>
             </div>
-            <p class="footer-text">&copy; 2026 AspirasiKu. Dibuat Oleh Kelompok 11.</p>
+            <p class="footer-text">&copy; 2026 Suara Kampus. Untuk kemajuan bersama.</p>
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>

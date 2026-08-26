@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Clock, Radio } from 'lucide-react'
+import { Clock } from 'lucide-react'
 
 export default function RealtimeClock() {
   const [timeStr, setTimeStr] = useState<string>('')
@@ -44,7 +44,7 @@ export default function RealtimeClock() {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
         </span>
-        <span className="hidden sm:inline">LIVE</span>
+        <span className="hidden sm:inline">AKTIF</span>
       </div>
       <span className="text-slate-600">|</span>
       <div className="flex items-center gap-1.5 text-slate-300">

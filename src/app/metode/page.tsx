@@ -3,10 +3,10 @@ import { BookOpen, CheckCircle, Cpu, FileCheck, Layers, Award, Terminal, Activit
 
 export default function MetodePage() {
   const metrics = [
-    { label: 'Akurasi Model', value: '86.89%', desc: 'Rasio prediksi benar dari seluruh data uji', color: 'text-emerald-400', border: 'border-emerald-500/30' },
-    { label: 'Precision', value: '86.89%', desc: 'Tingkat ketepatan klasifikasi sentimen positif & negatif', color: 'text-blue-400', border: 'border-blue-500/30' },
-    { label: 'Recall', value: '86.89%', desc: 'Sensitivitas model dalam mengenali seluruh pola aspirasi', color: 'text-indigo-400', border: 'border-indigo-500/30' },
-    { label: 'F1-Score', value: '86.89%', desc: 'Harmonic mean antara precision dan recall', color: 'text-amber-400', border: 'border-amber-500/30' },
+    { label: 'Akurasi Sistem', value: '86.89%', desc: 'Proporsi hasil klasifikasi yang tepat pada data uji', color: 'text-emerald-400', border: 'border-emerald-500/30' },
+    { label: 'Ketepatan', value: '86.89%', desc: 'Konsistensi sistem saat menetapkan kategori aspirasi', color: 'text-blue-400', border: 'border-blue-500/30' },
+    { label: 'Cakupan', value: '86.89%', desc: 'Kemampuan mengenali beragam pola aspirasi', color: 'text-indigo-400', border: 'border-indigo-500/30' },
+    { label: 'Keseimbangan', value: '86.89%', desc: 'Ukuran keseimbangan antara ketepatan dan cakupan', color: 'text-amber-400', border: 'border-amber-500/30' },
   ]
 
   const pipelineSteps = [
@@ -24,13 +24,13 @@ export default function MetodePage() {
       <div className="text-center max-w-3xl mx-auto space-y-3">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold uppercase tracking-wider">
           <Award className="w-3.5 h-3.5" />
-          <span>Evaluasi Performa & Metodologi Model</span>
+          <span>Transparansi Sistem</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-          Metode Machine Learning & NLP Pipeline
+          Bagaimana Sistem Membaca Aspirasi
         </h1>
         <p className="text-xs sm:text-sm text-slate-300">
-          Penjelasan arsitektur sistem klasifikasi teks berbasis <em>Support Vector Machine (Linear SVM)</em> dengan pembobotan <em>TF-IDF</em> untuk bahasa Indonesia.
+          Sistem menggunakan pemrosesan bahasa Indonesia untuk membantu mengelompokkan aspirasi secara konsisten. Penjelasan berikut membuat proses dan batasannya mudah dipahami.
         </p>
       </div>
 
@@ -53,7 +53,7 @@ export default function MetodePage() {
         <div className="flex items-center gap-2.5 pb-4 border-b border-slate-800">
           <Layers className="w-5 h-5 text-blue-400" />
           <h2 className="text-base font-bold text-white tracking-tight">
-            Tahapan Pemrosesan Teks (NLP Pipeline)
+            Tahapan Pemrosesan Aspirasi
           </h2>
         </div>
 
@@ -101,16 +101,16 @@ export default function MetodePage() {
             <span className="text-slate-200 font-bold">Sastrawi Stemmer + Custom Lexicon</span>
           </div>
           <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 font-mono">
-            <span className="text-slate-500 block text-[11px]">Database Cloud:</span>
-            <span className="text-emerald-400 font-bold">Supabase Realtime PostgreSQL</span>
+            <span className="text-slate-500 block text-[11px]">Penyimpanan Data:</span>
+            <span className="text-emerald-400 font-bold">Basis data PostgreSQL tersinkronisasi</span>
           </div>
           <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 font-mono">
-            <span className="text-slate-500 block text-[11px]">Frontend Framework:</span>
-            <span className="text-blue-400 font-bold">Next.js 14 App Router + Tailwind</span>
+            <span className="text-slate-500 block text-[11px]">Aplikasi Web:</span>
+            <span className="text-blue-400 font-bold">Aplikasi web responsif</span>
           </div>
           <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 font-mono">
-            <span className="text-slate-500 block text-[11px]">Kecepatan Inferensi:</span>
-            <span className="text-amber-400 font-bold">~11 ms / prediksi</span>
+            <span className="text-slate-500 block text-[11px]">Waktu Respons:</span>
+            <span className="text-amber-400 font-bold">Rata-rata ~11 ms / aspirasi</span>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Sparkles, LayoutDashboard, History, BookOpen, Menu, X, Home } from 'lucide-react'
+import { GraduationCap, LayoutDashboard, History, BookOpen, Menu, X, Home } from 'lucide-react'
 import RealtimeClock from './RealtimeClock'
 
 export default function Navbar() {
@@ -12,28 +12,28 @@ export default function Navbar() {
 
   const navItems = [
     { name: 'Beranda', href: '/', icon: Home },
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Riwayat', href: '/riwayat', icon: History },
-    { name: 'Metode', href: '/metode', icon: BookOpen },
+    { name: 'Ringkasan', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Arsip Aspirasi', href: '/riwayat', icon: History },
+    { name: 'Tentang Sistem', href: '/metode', icon: BookOpen },
   ]
 
   return (
-    <header className="sticky top-0 z-50 w-full px-4 sm:px-6 lg:px-8 pt-3 pb-2 backdrop-blur-md bg-[#050816]/75 border-b border-slate-800/80 transition-all">
+    <header className="sticky top-0 z-50 w-full px-4 sm:px-6 lg:px-8 pt-3 pb-2 backdrop-blur-md bg-[#08111f]/85 border-b border-slate-700/70 transition-all">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-emerald-400 p-0.5 shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-blue-400 group-hover:text-emerald-400 transition-colors" />
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-amber-400 p-0.5 shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-full h-full bg-[#0b1728] rounded-[10px] flex items-center justify-center">
+              <GraduationCap className="w-5 h-5 text-cyan-300 group-hover:text-amber-300 transition-colors" />
             </div>
           </div>
           <div>
             <div className="flex items-center gap-1.5 font-bold text-lg tracking-tight text-white">
-              <span>Sentimen</span>
-              <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-emerald-400 bg-clip-text text-transparent">AI</span>
+              <span>Suara</span>
+              <span className="text-cyan-300">Kampus</span>
             </div>
             <p className="text-[10px] text-slate-400 tracking-wider uppercase font-medium -mt-1">
-              Realtime NLP System
+              Pusat Aspirasi Sivitas Akademika
             </p>
           </div>
         </Link>

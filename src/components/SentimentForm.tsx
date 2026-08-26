@@ -27,11 +27,11 @@ export default function SentimentForm({ onPredictionSuccess }: SentimentFormProp
     if (e) e.preventDefault()
     const trimmed = text.trim()
     if (!trimmed) {
-      setError('Harap masukkan teks aspirasi terlebih dahulu.')
+      setError('Silakan tuliskan aspirasi atau pengalaman Anda terlebih dahulu.')
       return
     }
     if (trimmed.length < 5) {
-      setError('Teks minimal 5 karakter agar dapat dianalisis.')
+      setError('Aspirasi memerlukan sedikitnya 5 karakter agar dapat diproses.')
       return
     }
 
@@ -48,7 +48,7 @@ export default function SentimentForm({ onPredictionSuccess }: SentimentFormProp
       const data = await res.json()
 
       if (!res.ok || data.error) {
-        throw new Error(data.error || 'Gagal menganalisis teks')
+        throw new Error(data.error || 'Aspirasi belum dapat dianalisis.')
       }
 
       setResult(data)
@@ -96,10 +96,10 @@ export default function SentimentForm({ onPredictionSuccess }: SentimentFormProp
             </div>
             <div>
               <h2 className="text-base font-bold text-white tracking-tight">
-                Analisis Sentimen Teks Tunggal
+                Kirim Aspirasi
               </h2>
               <p className="text-xs text-slate-400">
-                Ketik teks atau gunakan contoh aspirasi di bawah
+                Ceritakan pengalaman Anda secara singkat dan jelas
               </p>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function SentimentForm({ onPredictionSuccess }: SentimentFormProp
                 if (error) setError(null)
               }}
               rows={4}
-              placeholder="Contoh: Fasilitas wifi kampus di gedung baru sangat cepat dan stabil untuk belajar..."
+              placeholder="Contoh: Fasilitas Wi-Fi di gedung baru sangat cepat dan stabil untuk mendukung kegiatan belajar..."
               className="w-full rounded-2xl bg-slate-950/80 border border-slate-700/80 p-4 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all resize-none shadow-inner"
             />
           </div>
@@ -136,7 +136,7 @@ export default function SentimentForm({ onPredictionSuccess }: SentimentFormProp
           {/* Sample Chips */}
           <div>
             <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
-              Coba Contoh Kalimat Cepat:
+              Pilih contoh aspirasi:
             </div>
             <div className="flex flex-wrap gap-2">
               {SAMPLES.map((sample, idx) => (
@@ -161,7 +161,7 @@ export default function SentimentForm({ onPredictionSuccess }: SentimentFormProp
               className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700/60 text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>Reset</span>
+              <span>Bersihkan</span>
             </button>
 
             <button
@@ -172,12 +172,12 @@ export default function SentimentForm({ onPredictionSuccess }: SentimentFormProp
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Menganalisis...</span>
+                  <span>Memproses aspirasi...</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 text-emerald-300" />
-                  <span>Analisis Sentimen</span>
+                  <span>Kirim & Analisis</span>
                   <Send className="w-3.5 h-3.5 opacity-70" />
                 </>
               )}

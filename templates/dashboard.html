@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Analytics Dashboard - AspirasiKu{% endblock %}
+{% block title %}Ringkasan Aspirasi - Suara Kampus{% endblock %}
 {% block content %}
 <section class="container">
     <div class="page-header" data-aos="fade-up">
-        <h1>Analytics Dashboard</h1>
-        <p>Visualisasi data sentimen aspirasi mahasiswa secara real-time yang dianalisis menggunakan algoritma kecerdasan buatan.</p>
+        <h1>Ringkasan Aspirasi Kampus</h1>
+        <p>Pantau kecenderungan aspirasi sivitas akademika dan temukan prioritas perbaikan layanan.</p>
     </div>
     <div class="stats-grid" data-aos="fade-up" data-aos-delay="100">
         <div class="stat-card">
             <div class="stat-icon purple"><i class="fa-solid fa-chart-line"></i></div>
             <div class="stat-value" id="dashTotal">{{ stats.total or 0 }}</div>
-            <div class="stat-label" data-tooltip="Total keseluruhan aspirasi mahasiswa yang diproses">Total Data</div>
+            <div class="stat-label" data-tooltip="Total seluruh aspirasi yang telah diproses">Total Aspirasi</div>
         </div>
         <div class="stat-card">
             <div class="stat-icon green"><i class="fa-solid fa-face-smile"></i></div>
@@ -50,7 +50,7 @@
             <div class="card-header">
                 <h2 class="card-title">
                     <span class="card-title-icon blue"><i class="fa-solid fa-chart-area"></i></span>
-                    Trend Analisis Sentimen
+                    Perubahan Aspirasi dari Waktu ke Waktu
                 </h2>
             </div>
             <div class="card-body">

@@ -86,11 +86,11 @@ export default function RiwayatPage() {
               <History className="w-4 h-4" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Riwayat Analisis Sentimen
+              Arsip Aspirasi Kampus
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Data tersinkronisasi langsung dengan Supabase PostgreSQL — reset otomatis setiap awal bulan baru
+            Telusuri aspirasi yang telah tercatat, lengkap dengan kategori dan waktu penyampaiannya.
           </p>
         </div>
 
@@ -109,7 +109,7 @@ export default function RiwayatPage() {
               }`}
             >
               <Calendar className="w-3.5 h-3.5" />
-              <span>Bulan {labelBulan} (Auto Reset)</span>
+              <span>Periode {labelBulan}</span>
             </button>
             <button
               onClick={() => {
@@ -122,7 +122,7 @@ export default function RiwayatPage() {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              Semua Riwayat
+              Seluruh Arsip
             </button>
           </div>
 
@@ -131,7 +131,7 @@ export default function RiwayatPage() {
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 text-xs font-semibold shadow-md transition-all"
           >
             <Download className="w-4 h-4 text-emerald-400" />
-            <span>Export CSV ({totalCount.toLocaleString('id-ID')})</span>
+            <span>Unduh CSV ({totalCount.toLocaleString('id-ID')})</span>
           </button>
         </div>
       </div>
@@ -148,7 +148,7 @@ export default function RiwayatPage() {
               setSearch(e.target.value)
               setPage(1)
             }}
-            placeholder="Cari kata kunci teks..."
+            placeholder="Cari isi aspirasi..."
             className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
           />
         </div>
@@ -187,7 +187,7 @@ export default function RiwayatPage() {
             <thead className="bg-slate-950/90 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
               <tr>
                 <th className="p-4 w-12 text-center">ID</th>
-                <th className="p-4">Teks Aspirasi</th>
+                <th className="p-4">Isi Aspirasi</th>
                 <th className="p-4 w-32 text-center">Sentimen</th>
                 <th className="p-4 w-36 text-center">Probabilitas</th>
                 <th className="p-4 w-44 text-right">Waktu (WIB)</th>
@@ -200,14 +200,14 @@ export default function RiwayatPage() {
                   <td colSpan={6} className="p-12 text-center text-slate-500">
                     <div className="flex items-center justify-center gap-2">
                       <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-                      <span>Memuat data dari Supabase...</span>
+                      <span>Memuat arsip aspirasi...</span>
                     </div>
                   </td>
                 </tr>
               ) : predictions.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-12 text-center text-slate-500 italic">
-                    Tidak ditemukan data riwayat untuk periode ini ({period === 'current_month' ? labelBulan : 'Semua Waktu'}).
+                    Belum ada aspirasi untuk periode ini ({period === 'current_month' ? labelBulan : 'Seluruh Periode'}).
                   </td>
                 </tr>
               ) : (
@@ -321,7 +321,7 @@ export default function RiwayatPage() {
 
             <div>
               <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                Teks Asli Aspirasi
+                Isi Aspirasi
               </div>
               <p className="text-sm text-slate-200 bg-slate-950 p-3.5 rounded-2xl border border-slate-800 leading-relaxed font-mono">
                 "{selectedRecord.teks_asli}"
@@ -330,7 +330,7 @@ export default function RiwayatPage() {
 
             <div>
               <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                Distribusi Probabilitas
+                Tingkat Keyakinan Sistem
               </div>
               <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono">
                 <div className="p-2 rounded-xl bg-emerald-950/40 border border-emerald-800/40 text-emerald-300">

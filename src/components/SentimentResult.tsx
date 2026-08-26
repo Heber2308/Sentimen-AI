@@ -23,7 +23,7 @@ export default function SentimentResult({ result, rawText }: SentimentResultProp
   const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {
-    const textToCopy = `Hasil Analisis Sentimen AI:\nSentimen: ${result.sentimen.toUpperCase()}\nProbabilitas: Positif ${result.probabilitas.positif}%, Netral ${result.probabilitas.netral}%, Negatif ${result.probabilitas.negatif}%\nKata Kunci: ${result.kata_kunci.join(', ')}\nTeks: "${rawText}"`
+    const textToCopy = `Ringkasan Aspirasi Kampus:\nKategori: ${result.sentimen.toUpperCase()}\nTingkat keyakinan: Positif ${result.probabilitas.positif}%, Netral ${result.probabilitas.netral}%, Negatif ${result.probabilitas.negatif}%\nTopik terkait: ${result.kata_kunci.join(', ')}\nIsi aspirasi: "${rawText}"`
     navigator.clipboard.writeText(textToCopy)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -32,7 +32,7 @@ export default function SentimentResult({ result, rawText }: SentimentResultProp
   const sentimentConfig = {
     positif: {
       title: 'Sentimen Positif',
-      subtitle: 'Teks mencerminkan kepuasan, apresiasi, atau masukan yang membangun.',
+      subtitle: 'Aspirasi menunjukkan kepuasan, apresiasi, atau masukan yang membangun.',
       icon: ThumbsUp,
       badgeClass: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 shadow-glow-positif',
       borderClass: 'border-emerald-500/40',
@@ -41,7 +41,7 @@ export default function SentimentResult({ result, rawText }: SentimentResultProp
     },
     netral: {
       title: 'Sentimen Netral',
-      subtitle: 'Teks bersifat informatif, menanyakan pertanyaan, atau netral tanpa emosi dominan.',
+      subtitle: 'Aspirasi bersifat informatif atau belum menunjukkan kecenderungan emosi tertentu.',
       icon: MinusCircle,
       badgeClass: 'bg-sky-500/15 text-sky-400 border-sky-500/30 shadow-glow-netral',
       borderClass: 'border-sky-500/40',
@@ -50,7 +50,7 @@ export default function SentimentResult({ result, rawText }: SentimentResultProp
     },
     negatif: {
       title: 'Sentimen Negatif',
-      subtitle: 'Teks mencerminkan keluhan, ketidakpuasan, atau kritik tajam terhadap layanan.',
+      subtitle: 'Aspirasi memuat keluhan, ketidakpuasan, atau kritik terhadap layanan kampus.',
       icon: ThumbsDown,
       badgeClass: 'bg-rose-500/15 text-rose-400 border-rose-500/30 shadow-glow-negatif',
       borderClass: 'border-rose-500/40',
@@ -85,7 +85,7 @@ export default function SentimentResult({ result, rawText }: SentimentResultProp
               <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${sentimentConfig.badgeClass}`}>
                 {sentimentConfig.title}
               </span>
-              <span className="text-xs text-slate-400 font-mono">Tersimpan di Supabase</span>
+              <span className="text-xs text-slate-400 font-mono">Tercatat di arsip kampus</span>
             </div>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl">
               {sentimentConfig.subtitle}
@@ -96,7 +96,7 @@ export default function SentimentResult({ result, rawText }: SentimentResultProp
         <button
           onClick={handleCopy}
           className="self-start sm:self-center flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60 text-xs font-medium transition-all shadow-sm"
-          title="Salin hasil analisis"
+          title="Salin ringkasan aspirasi"
         >
           {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
           <span>{copied ? 'Tersalin!' : 'Salin Hasil'}</span>
@@ -107,7 +107,7 @@ export default function SentimentResult({ result, rawText }: SentimentResultProp
       <div className="my-6">
         <div className="flex items-center gap-2 text-xs font-bold uppercase text-slate-400 tracking-wider mb-3">
           <BarChart2 className="w-4 h-4 text-blue-400" />
-          <span>Distribusi Probabilitas Model AI</span>
+          <span>Tingkat keyakinan sistem</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -167,7 +167,7 @@ export default function SentimentResult({ result, rawText }: SentimentResultProp
         <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800/60">
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">
             <Tag className="w-3.5 h-3.5 text-blue-400" />
-            <span>Kata Kunci Terdeteksi (TF-IDF)</span>
+            <span>Topik yang teridentifikasi</span>
           </div>
           {result.kata_kunci && result.kata_kunci.length > 0 ? (
             <div className="flex flex-wrap gap-1.5">
@@ -189,7 +189,7 @@ export default function SentimentResult({ result, rawText }: SentimentResultProp
         <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800/60">
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">
             <FileText className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Teks Hasil Preprocessing NLP</span>
+            <span>Versi teks yang diproses sistem</span>
           </div>
           <p className="text-xs text-slate-300 font-mono line-clamp-3 bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
             {result.teks_bersih || rawText}

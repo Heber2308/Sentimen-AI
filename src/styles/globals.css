@@ -11,18 +11,41 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: #050816;
+  background-color: #08111f;
   color: #f1f5f9;
   overflow-x: hidden;
+}
+
+button,
+a,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Background Gradients & Ambient Glow */
 .bg-ambient {
   background: 
-    radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
-    radial-gradient(circle at 85% 25%, rgba(16, 185, 129, 0.10) 0%, transparent 40%),
-    radial-gradient(circle at 50% 85%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-    #050816;
+    radial-gradient(circle at 12% 8%, rgba(14, 165, 233, 0.14) 0%, transparent 36%),
+    radial-gradient(circle at 88% 18%, rgba(245, 158, 11, 0.09) 0%, transparent 30%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.4), transparent 55%),
+    #08111f;
 }
 
 /* Modern Glassmorphism Utilities */

@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Riwayat Prediksi - AspirasiKu{% endblock %}
+{% block title %}Arsip Aspirasi - Suara Kampus{% endblock %}
 {% block content %}
 <section class="container">
     <div class="page-header" data-aos="fade-up">
-        <h1>Riwayat<br><em style="color:var(--persimmon-lt);">Analisis</em></h1>
+        <h1>Arsip<br><em style="color:var(--persimmon-lt);">Aspirasi</em></h1>
         <p>Semua hasil prediksi sentimen yang telah dilakukan tersimpan dengan aman untuk keperluan audit dan monitoring.</p>
     </div>
     <div class="card" data-aos="fade-up" data-aos-delay="100">
@@ -12,7 +12,7 @@
             <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
                 <h2 class="card-title">
                     <span class="card-title-icon purple"><i class="fa-solid fa-clock-rotate-left"></i></span>
-                    Database Aspirasi
+                    Arsip Aspirasi Kampus
                 </h2>
             </div>
             <div class="filter-bar" style="margin-top:20px;margin-bottom:0;">
@@ -25,12 +25,12 @@
                 <div style="position:relative;flex:1;">
                     <i class="fa-solid fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--cream-muted);font-size:13px;pointer-events:none;"></i>
                     <input type="text" class="filter-input" id="filterSearch"
-                        placeholder="Cari teks aspirasi..."
+                        placeholder="Cari isi aspirasi..."
                         oninput="filterTable()"
                         style="padding-left:38px;width:100%;">
                 </div>
                 <a href="/download-hasil" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-download"></i> Export Data
+                    <i class="fa-solid fa-download"></i> Unduh Data
                 </a>
             </div>
         </div>
@@ -41,7 +41,7 @@
                     <thead>
                         <tr>
                             <th>Timeline</th>
-                            <th>Teks Aspirasi</th>
+                            <th>Isi Aspirasi</th>
                             <th>Sentimen</th>
                             <th>Insight Keywords</th>
                         </tr>
@@ -87,10 +87,10 @@
             {% else %}
             <div class="empty-state">
                 <div class="empty-icon"><i class="fa-solid fa-database"></i></div>
-                <h3 class="empty-title">Database Kosong</h3>
-                <p class="empty-desc">Belum ada analisis sentimen yang dilakukan. Data akan muncul di sini setelah Anda melakukan prediksi.</p>
+                <h3 class="empty-title">Belum Ada Aspirasi</h3>
+                <p class="empty-desc">Data akan muncul setelah Anda menyampaikan masukan melalui halaman beranda.</p>
                 <a href="/#input-section" class="btn btn-primary">
-                    <i class="fa-solid fa-sparkles"></i> Mulai Analisis Pertama
+                    <i class="fa-solid fa-pen-to-square"></i> Sampaikan Aspirasi Pertama
                 </a>
             </div>
             {% endif %}

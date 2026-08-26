@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { Sparkles, MessageSquare, Layers, Activity, ArrowRight, ShieldCheck, Zap } from 'lucide-react'
+import { Sparkles, MessageSquare, Layers, Activity, ArrowRight } from 'lucide-react'
 import StatsCard from '@/components/StatsCard'
 import SentimentForm from '@/components/SentimentForm'
 import BatchUpload from '@/components/BatchUpload'
@@ -65,20 +65,20 @@ export default function HomePage() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-          <span>Next.js & Supabase Realtime Active</span>
+          <span>Portal aspirasi resmi kampus</span>
           <span className="text-slate-600">•</span>
-          <span className="text-emerald-400">Latensi ~11ms</span>
+          <span className="text-emerald-400">Terhubung secara langsung</span>
         </div>
 
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
-          Analisis Sentimen Aspirasi Kampus Berbasis{' '}
+          Dengarkan suara kampus, wujudkan perubahan{' '}
           <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 bg-clip-text text-transparent">
             Kecerdasan Buatan
           </span>
         </h1>
 
         <p className="mt-4 sm:mt-6 text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed">
-          Sistem Natural Language Processing otomatis untuk mengelompokkan aspirasi, kritik, dan ulasan sivitas akademika ke dalam kategori <strong className="text-emerald-400">Positif</strong>, <strong className="text-sky-400">Netral</strong>, atau <strong className="text-rose-400">Negatif</strong> secara instan dan realtime.
+          Sampaikan pengalaman, apresiasi, atau masukan Anda. Sistem ini membantu kampus membaca pola aspirasi sivitas akademika secara cepat, terukur, dan transparan.
         </p>
 
         {/* Quick Stats Banner */}
@@ -101,7 +101,7 @@ export default function HomePage() {
               }`}
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Analisis Teks Tunggal</span>
+              <span>Kirim Aspirasi</span>
             </button>
             <button
               onClick={() => setActiveTab('batch')}
@@ -112,7 +112,7 @@ export default function HomePage() {
               }`}
             >
               <Layers className="w-4 h-4" />
-              <span>Upload Batch CSV</span>
+              <span>Impor Data Aspirasi</span>
             </button>
           </div>
         </div>
@@ -134,7 +134,7 @@ export default function HomePage() {
                 <Activity className="w-3.5 h-3.5" />
               </div>
               <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider">
-                Aktivitas Analisis Realtime Terkini
+                Aspirasi Terbaru
               </h3>
             </div>
 
@@ -142,14 +142,14 @@ export default function HomePage() {
               href="/riwayat"
               className="flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
             >
-              <span>Lihat Semua Riwayat</span>
+              <span>Buka Arsip Aspirasi</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           {recentList.length === 0 ? (
             <p className="text-xs text-slate-500 italic text-center py-6">
-              Belum ada aktivitas prediksi terbaru.
+              Belum ada aspirasi yang tercatat pada periode ini.
             </p>
           ) : (
             <div className="space-y-3">

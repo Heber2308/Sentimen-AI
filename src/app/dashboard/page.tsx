@@ -108,11 +108,11 @@ export default function DashboardPage() {
               <LayoutDashboard className="w-4 h-4" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Dashboard Analisis Realtime
+              Ringkasan Aspirasi Kampus
             </h1>
           </div>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Visualisasi data statistik & tren sentimen — otomatis reset setiap awal bulan baru
+            Pantau kecenderungan aspirasi sivitas akademika dan temukan prioritas perbaikan layanan.
           </p>
         </div>
 
@@ -128,7 +128,7 @@ export default function DashboardPage() {
               }`}
             >
               <Calendar className="w-3.5 h-3.5" />
-              <span>Bulan {labelBulan} (Auto Reset)</span>
+              <span>Periode {labelBulan}</span>
             </button>
             <button
               onClick={() => setPeriod('all')}
@@ -138,7 +138,7 @@ export default function DashboardPage() {
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              Semua Waktu
+              Seluruh Periode
             </button>
           </div>
 
@@ -146,7 +146,7 @@ export default function DashboardPage() {
             onClick={handleManualRefresh}
             disabled={isRefreshing}
             className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 text-xs font-semibold transition-all disabled:opacity-50"
-            title="Sinkronkan Data"
+            title="Perbarui ringkasan"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-blue-400' : ''}`} />
           </button>
@@ -154,10 +154,10 @@ export default function DashboardPage() {
           <button
             onClick={() => setShowResetModal(true)}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-semibold transition-all"
-            title="Pembersihan / Reset Database"
+            title="Kelola data arsip"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Reset Data</span>
+            <span>Kelola Data</span>
           </button>
         </div>
       </div>
@@ -173,7 +173,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <PieIcon className="w-4 h-4 text-emerald-400" />
               <h2 className="text-sm font-bold text-slate-200 uppercase tracking-wider">
-                Distribusi Persentase Sentimen
+                Komposisi Kategori Aspirasi
               </h2>
             </div>
             <span className="text-[11px] text-slate-400 font-mono">
@@ -189,7 +189,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-blue-400" />
               <h2 className="text-sm font-bold text-slate-200 uppercase tracking-wider">
-                Tren Perkembangan Aspirasi
+                Perubahan Aspirasi dari Waktu ke Waktu
               </h2>
             </div>
             <span className="text-[11px] text-slate-400 font-mono">
@@ -221,9 +221,9 @@ export default function DashboardPage() {
             </div>
 
             <div>
-              <h3 className="text-base font-bold text-white">Reset Database Sentimen</h3>
+              <h3 className="text-base font-bold text-white">Kelola Data Arsip</h3>
               <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Pilih opsi pembersihan data database di Supabase. Data yang dihapus tidak dapat dikembalikan.
+                Pilih data yang ingin dihapus dari arsip. Tindakan ini tidak dapat dibatalkan.
               </p>
             </div>
 
@@ -235,10 +235,10 @@ export default function DashboardPage() {
               >
                 <div>
                   <div className="text-xs font-semibold text-slate-200">
-                    Bersihkan Data Bulan Sebelumnya
+                    Hapus Arsip Periode Sebelumnya
                   </div>
                   <div className="text-[11px] text-slate-500">
-                    Hanya menghapus arsip data sebelum {labelBulan}
+                    Hanya menghapus data sebelum periode {labelBulan}
                   </div>
                 </div>
                 <Check className="w-4 h-4 text-blue-400" />
@@ -251,10 +251,10 @@ export default function DashboardPage() {
               >
                 <div>
                   <div className="text-xs font-semibold text-rose-300">
-                    Reset Seluruh Riwayat (Mulai dari Nol)
+                    Hapus Seluruh Arsip
                   </div>
                   <div className="text-[11px] text-rose-400/70">
-                    Mengosongkan semua riwayat & statistik
+                    Mengosongkan seluruh arsip dan ringkasan
                   </div>
                 </div>
                 <Trash2 className="w-4 h-4 text-rose-400" />

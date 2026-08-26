@@ -30,7 +30,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
 
   const handleFile = (selectedFile: File) => {
     if (!selectedFile.name.endsWith('.csv')) {
-      setError('Hanya file bertipe .csv yang didukung.')
+          setError('Silakan pilih file berformat CSV.')
       return
     }
 
@@ -44,7 +44,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
       complete: (result) => {
         setParsing(false)
         if (result.data.length === 0) {
-          setError('File CSV kosong atau format tidak sesuai.')
+          setError('File CSV kosong atau format kolom belum sesuai.')
           return
         }
 
@@ -66,7 +66,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
           .filter((i) => i.teks.length >= 5)
 
         if (items.length === 0) {
-          setError(`Tidak ditemukan kolom teks yang valid atau panjang teks kurang dari 5 karakter. (Kolom terbaca: ${textCol})`)
+          setError(`Belum ditemukan kolom aspirasi yang valid atau seluruh teks terlalu singkat. (Kolom terbaca: ${textCol})`)
           return
         }
 
@@ -74,7 +74,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
       },
       error: (err) => {
         setParsing(false)
-        setError(`Gagal membaca file CSV: ${err.message}`)
+          setError(`File CSV belum dapat dibaca: ${err.message}`)
       },
     })
   }
@@ -161,10 +161,10 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
             </div>
             <div>
               <h2 className="text-base font-bold text-white tracking-tight">
-                Upload & Analisis Massal CSV
+                Impor Aspirasi dalam Jumlah Besar
               </h2>
               <p className="text-xs text-slate-400">
-                Unggah ribuan data teks aspirasi sekaligus untuk analisis otomatis
+                Tinjau banyak aspirasi sekaligus dari satu file CSV
               </p>
             </div>
           </div>
@@ -207,10 +207,10 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
               <UploadCloud className="w-7 h-7" />
             </div>
             <p className="text-sm font-semibold text-slate-200">
-              Tarik & Letakkan file CSV di sini, atau <span className="text-blue-400">Pilih File</span>
+              Tarik file CSV ke sini, atau <span className="text-blue-400">Pilih dari perangkat</span>
             </p>
             <p className="text-xs text-slate-500 mt-1">
-              Mendukung file .csv dengan header <code className="text-slate-400 font-mono">teks</code>, <code className="text-slate-400 font-mono">aspirasi</code>, atau <code className="text-slate-400 font-mono">pesan</code>
+              Gunakan header kolom <code className="text-slate-400 font-mono">teks</code>, <code className="text-slate-400 font-mono">aspirasi</code>, atau <code className="text-slate-400 font-mono">pesan</code>
             </p>
           </div>
         )}
@@ -234,7 +234,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
                 <div>
                   <div className="text-sm font-bold text-slate-200">{file.name}</div>
                   <div className="text-xs text-slate-400">
-                    {results.length.toLocaleString('id-ID')} baris data valid terdeteksi
+                    {results.length.toLocaleString('id-ID')} aspirasi valid ditemukan
                   </div>
                 </div>
               </div>
@@ -245,7 +245,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
                   disabled={processing}
                   className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors disabled:opacity-50"
                 >
-                  Ganti File
+                  Pilih File Lain
                 </button>
 
                 {!isAllProcessed && (
@@ -262,7 +262,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
                     ) : (
                       <>
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Mulai Analisis Semua</span>
+                        <span>Proses Semua Aspirasi</span>
                       </>
                     )}
                   </button>
@@ -274,7 +274,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
                     className="flex items-center gap-2 px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-600/30 transition-all"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>Download Hasil (.CSV)</span>
+                    <span>Unduh Hasil (.CSV)</span>
                   </button>
                 )}
               </div>
@@ -284,7 +284,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
             {processing && (
               <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800">
                 <div className="flex justify-between text-xs text-slate-300 mb-2 font-mono">
-                  <span>Memproses data batch...</span>
+                  <span>Memproses kumpulan aspirasi...</span>
                   <span className="text-blue-400 font-bold">{progress}%</span>
                 </div>
                 <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
@@ -303,7 +303,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
                   <thead className="sticky top-0 bg-slate-950 text-slate-400 font-semibold border-b border-slate-800">
                     <tr>
                       <th className="p-3 w-12 text-center">#</th>
-                      <th className="p-3">Teks Aspirasi</th>
+                      <th className="p-3">Isi Aspirasi</th>
                       <th className="p-3 w-32 text-center">Sentimen</th>
                       <th className="p-3 w-40 text-right">Probabilitas</th>
                     </tr>
@@ -327,7 +327,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
                               {row.sentimen}
                             </span>
                           ) : (
-                            <span className="text-slate-500 italic">Menunggu...</span>
+                            <span className="text-slate-500 italic">Menunggu proses</span>
                           )}
                         </td>
                         <td className="p-3 text-right font-mono text-slate-400">
@@ -350,7 +350,7 @@ export default function BatchUpload({ onBatchComplete }: BatchUploadProps) {
               </div>
               {results.length > 50 && (
                 <div className="p-2.5 text-center text-xs text-slate-500 bg-slate-950/80 border-t border-slate-800">
-                  Menampilkan 50 dari {results.length.toLocaleString('id-ID')} baris data
+                  Menampilkan 50 dari {results.length.toLocaleString('id-ID')} aspirasi
                 </div>
               )}
             </div>

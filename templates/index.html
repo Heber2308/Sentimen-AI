@@ -1,25 +1,24 @@
 {% extends "base.html" %}
-{% block title %}AspirasiKu - Prediksi Sentimen Aspirasi Otomatis{% endblock %}
+{% block title %}Suara Kampus - Pusat Aspirasi Sivitas Akademika{% endblock %}
 {% block content %}
 <section class="hero" data-aos="fade-up" data-aos-duration="1000">
     <div class="hero-badge">
         <span class="hero-badge-dot"></span>
-        Kelompok 11 &nbsp;·&nbsp; Kecerdasan Buatan
+        Portal aspirasi resmi kampus
     </div>
     <h1 class="hero-title">
-        Memahami Aspirasi<br>Mahasiswa dengan
-        <span class="hero-title-gradient">Artificial Intelligence</span>
+        Dengarkan suara<br>sivitas akademika dengan
+        <span class="hero-title-gradient">lebih bermakna</span>
     </h1>
     <p class="hero-desc">
-        Platform analisis sentimen berbasis <em>Multinomial Naive Bayes</em> untuk memahami opini mahasiswa secara
-        cepat dan memiliki visual yang baik.
+        Sampaikan pengalaman, apresiasi, atau masukan Anda. Setiap aspirasi membantu kampus menentukan prioritas perbaikan secara lebih terarah.
     </p>
     <div class="hero-buttons">
         <a href="#input-section" class="btn btn-primary btn-lg">
-            <i class="fa-solid fa-sparkles"></i> Mulai Analisis
+            <i class="fa-solid fa-pen-to-square"></i> Sampaikan Aspirasi
         </a>
         <a href="/dashboard" class="btn btn-secondary btn-lg">
-            <i class="fa-solid fa-chart-pie"></i> Lihat Analytics
+            <i class="fa-solid fa-chart-pie"></i> Lihat Ringkasan
         </a>
     </div>
     <div class="hero-stats-bar" data-aos="fade-up" data-aos-delay="300">
@@ -53,16 +52,16 @@
         <div class="card-header">
             <h2 class="card-title">
                 <span class="card-title-icon purple"><i class="fa-solid fa-pen-nib"></i></span>
-                Input Teks Aspirasi
+                Sampaikan Aspirasi
             </h2>
-            <p class="card-desc">Masukkan keluhan, saran, atau opini mahasiswa untuk dianalisis oleh AI.</p>
+            <p class="card-desc">Ceritakan pengalaman atau masukan Anda secara singkat dan jelas.</p>
         </div>
         <div class="card-body">
             <div class="input-card-inner">
                 <div class="input-main">
                     <div class="input-group">
                         <textarea id="teksInput" class="input-teks"
-                            placeholder="Tuliskan aspirasi, kritik, atau saran mahasiswa di sini..." rows="7"
+                            placeholder="Tuliskan aspirasi, kritik, atau saran Anda di sini..." rows="7"
                             maxlength="2000" {% if not model_ready %}disabled{% endif %}></textarea>
                         <div class="input-footer">
                             <span id="charCount" class="char-count">0 / 2000 karakter</span>
@@ -71,30 +70,30 @@
                     <div class="button-group">
                         <button id="btnPredict" class="btn btn-primary btn-lg" {% if not model_ready %}disabled{% endif
                             %}>
-                            <i class="fa-solid fa-magnifying-glass-chart"></i> Analisis Sekarang
+                            <i class="fa-solid fa-magnifying-glass-chart"></i> Kirim & Analisis
                         </button>
                         <label for="csvUpload" class="btn btn-secondary btn-lg" style="cursor:pointer;" id="dropZone">
                             <i class="fa-solid fa-file-csv" id="uploadIcon"></i>
-                            <span id="uploadText">Upload CSV Dataset</span>
+                            <span id="uploadText">Impor Data CSV</span>
                             <input type="file" id="csvUpload" accept=".csv" hidden>
                         </label>
                     </div>
                 </div>
                 <div class="input-aside">
-                    <div class="input-aside-title">Petunjuk Penggunaan</div>
+                    <div class="input-aside-title">Panduan Singkat</div>
                     <div class="input-aside-tip">
                         <strong>Teks Tunggal</strong><br>
                         Ketik aspirasi mahasiswa di kolom yang tersedia lalu klik <em>Analisis Sekarang</em>.
                     </div>
                     <div class="input-aside-tip">
-                        <strong>Upload CSV</strong><br>
+                        <strong>Impor Data CSV</strong><br>
                         Siapkan file CSV dengan kolom <code
                             style="color:var(--persimmon-lt);font-family:var(--font-mono);font-size:12px;">teks</code>.
-                        Upload atau <em>drag-and-drop</em> file tersebut .
+                        Pilih atau seret file tersebut ke area impor.
                     </div>
                     <div class="input-aside-tip">
                         <strong>Drag & Drop</strong><br>
-                        Seret file CSV langsung ke area textarea maupun ke tombol upload.
+                        Seret file CSV ke area impor untuk memulai.
                     </div>
                 </div>
             </div>
@@ -137,14 +136,14 @@
             <div class="card-header">
                 <h2 class="card-title">
                     <span class="card-title-icon green"><i class="fa-solid fa-bolt"></i></span>
-                    Hasil Analisis AI
+                    Ringkasan Aspirasi
                 </h2>
             </div>
             <div class="card-body">
                 <div class="result-main-layout">
                     <div id="sentimenResult" class="sentimen-display"></div>
                     <div>
-                        <p class="section-label">Distribusi Probabilitas Model</p>
+                        <p class="section-label">Tingkat Keyakinan Sistem</p>
                         <div class="probability-group">
                             <div class="probability-item">
                                 <div class="probability-header">
@@ -182,7 +181,7 @@
                 <div style="margin-top:28px;padding-top:24px;border-top:1px solid var(--border-subtle);">
                     <div style="display:flex;flex-wrap:wrap;gap:36px;">
                         <div style="flex:1;min-width:260px;">
-                            <p class="section-label">Kata Paling Berpengaruh (TF-IDF)</p>
+                            <p class="section-label">Topik yang Teridentifikasi</p>
                             <div id="kataKunciList" class="keywords-container"></div>
                         </div>
                         <div style="flex:1.4;min-width:260px;">
