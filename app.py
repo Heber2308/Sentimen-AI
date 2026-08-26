@@ -11,19 +11,34 @@ import joblib
 import os
 import io
 import csv
+import json
 import warnings
 warnings.filterwarnings('ignore')
-import nltk
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
+
+try:
+    from nltk.tokenize import TreebankWordTokenizer
+    _tokenizer = TreebankWordTokenizer()
+    def tokenize_words(text):
+        return _tokenizer.tokenize(text)
+except Exception:
+    def tokenize_words(text):
+        return re.findall(r'\b\w+\b', text)
+
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import base64
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, 'data')
 is_vercel = os.environ.get('VERCEL') == '1' or os.environ.get('VERCEL_ENV') is not None or os.environ.get('NOW_REGION') is not None
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'sentimen-ai-secret-key-2024')
 if is_vercel:
@@ -34,8 +49,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 db = SQLAlchemy(app)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, 'data')
 UPLOAD_DIR = '/tmp/uploads' if is_vercel else os.path.join(BASE_DIR, 'uploads')
 MODEL_PATH = os.path.join(DATA_DIR, 'model_sentimen.pkl')
 VECTORIZER_PATH = os.path.join(DATA_DIR, 'vectorizer.pkl')
@@ -43,22 +56,10 @@ LABEL_MAPPING_PATH = os.path.join(DATA_DIR, 'label_mapping.pkl')
 PREPROCESS_CONFIG_PATH = os.path.join(DATA_DIR, 'preprocess_config.pkl')
 
 os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-
 try:
-    if is_vercel:
-        nltk_data_dir = '/tmp/nltk_data'
-        os.makedirs(nltk_data_dir, exist_ok=True)
-        nltk.data.path.append(nltk_data_dir)
-        nltk.download('punkt_tab', download_dir=nltk_data_dir, quiet=True)
-        nltk.download('punkt', download_dir=nltk_data_dir, quiet=True)
-        nltk.download('stopwords', download_dir=nltk_data_dir, quiet=True)
-    else:
-        nltk.download('punkt_tab', quiet=True)
-        nltk.download('punkt', quiet=True)
-        nltk.download('stopwords', quiet=True)
-except Exception as e:
-    print(f"NLTK download notice: {e}")
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+except Exception:
+    pass
 
 class Prediksi(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -72,7 +73,10 @@ class Prediksi(db.Model):
     waktu = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Asia/Jakarta')))
 
 with app.app_context():
-    db.create_all()
+    try:
+        db.create_all()
+    except Exception as e:
+        print(f"DB init warning: {e}")
 
 model = None
 vectorizer = None
@@ -104,10 +108,20 @@ except Exception as e:
     print(f"Stemmer init notice: {e}")
     stemmer = None
 
-try:
-    stopwords_id = set(stopwords.words('indonesian'))
-except Exception:
-    stopwords_id = set()
+STOPWORDS_FILE = os.path.join(DATA_DIR, 'stopwords_id.json')
+stopwords_id = set()
+if os.path.exists(STOPWORDS_FILE):
+    try:
+        with open(STOPWORDS_FILE, 'r', encoding='utf-8') as f:
+            stopwords_id = set(json.load(f))
+    except Exception:
+        pass
+if not stopwords_id:
+    try:
+        from nltk.corpus import stopwords
+        stopwords_id = set(stopwords.words('indonesian'))
+    except Exception:
+        stopwords_id = set()
 kata_penting = {
     'tidak', 'bukan', 'belum', 'jangan', 'sangat', 'sekali', 'lebih', 'kurang', 'paling', 'banget',
     'baik', 'buruk', 'bagus', 'jelek', 'puas', 'kecewa', 'senang', 'sedih', 'marah', 'benci', 'suka',
@@ -221,7 +235,7 @@ def preprocess_text(text):
     text = clean_text(text)
     if not text:
         return "", []
-    tokens = word_tokenize(text)
+    tokens = tokenize_words(text)
     tokens = [normalisasi.get(w, w) for w in tokens]
     original_tokens = [w for w in tokens if w not in stopwords_id and len(w) > 1]
     if use_stemming:

@@ -7,5 +7,5 @@ nltk
 Sastrawi
 joblib
 matplotlib
-seaborn
 wordcloud
+pytz
