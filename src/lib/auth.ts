@@ -1,10 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from './supabase'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const emailDomain = process.env.NEXT_PUBLIC_EMAIL_DOMAIN || '@students.satyaterrabhinneka.ac.id'
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export { supabase }
 
 /**
  * Validasi email kampus
