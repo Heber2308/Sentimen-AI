@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 
 const API_LOGO_URL =
-  'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/arsana-consulting-and-learnig-ecosystem'
+  'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/logo-stb'
 
 export const dynamic = 'force-dynamic'
 
