@@ -23,10 +23,10 @@ export const metadata: Metadata = {
       },
     ],
     shortcut:
-      'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/arsana-consulting-and-learnig-ecosystem',
+      'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/logo-stb',
     apple: [
       {
-        url: 'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/arsana-consulting-and-learnig-ecosystem',
+        url: 'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/logo-stb',
       },
       {
         url: '/apple-icon.png',
