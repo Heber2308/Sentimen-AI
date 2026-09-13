@@ -10,26 +10,22 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: 'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/logo-stb',
+        url: '/icon.png?v=2',
         type: 'image/png',
       },
       {
-        url: '/api/favicon',
+        url: '/api/favicon?v=2',
         type: 'image/png',
       },
       {
-        url: '/icon.png',
-        type: 'image/png',
+        url: '/favicon.ico?v=2',
+        sizes: 'any',
       },
     ],
-    shortcut:
-      'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/logo-stb',
+    shortcut: '/icon.png?v=2',
     apple: [
       {
-        url: 'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/logo-stb',
-      },
-      {
-        url: '/apple-icon.png',
+        url: '/apple-icon.png?v=2',
       },
     ],
   },

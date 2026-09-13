@@ -36,16 +36,21 @@ export async function GET() {
 
   // Fallback ke file icon lokal jika tunnel/API tidak merespons
   try {
-    const fallbackPath = path.join(process.cwd(), 'src', 'app', 'icon.png')
-    if (fs.existsSync(fallbackPath)) {
-      const fileBuffer = fs.readFileSync(fallbackPath)
-      return new NextResponse(fileBuffer, {
-        status: 200,
-        headers: {
-          'Content-Type': 'image/png',
-          'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800',
-        },
-      })
+    const candidatePaths = [
+      path.join(process.cwd(), 'public', 'icon.png'),
+      path.join(process.cwd(), 'src', 'app', 'icon.png'),
+    ]
+    for (const p of candidatePaths) {
+      if (fs.existsSync(p)) {
+        const fileBuffer = fs.readFileSync(p)
+        return new NextResponse(fileBuffer, {
+          status: 200,
+          headers: {
+            'Content-Type': 'image/png',
+            'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800',
+          },
+        })
+      }
     }
   } catch (err) {
     console.error('Fallback icon error:', err)
