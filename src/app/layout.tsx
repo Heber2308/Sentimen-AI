@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: 'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/arsana-consulting-and-learnig-ecosystem',
+        url: 'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/logo-stb',
         type: 'image/png',
       },
       {
