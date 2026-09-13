@@ -24,6 +24,34 @@ export interface PrediksiRecord {
   waktu: string
 }
 
+export type AspirasiStatus = 'baru' | 'ditinjau' | 'diproses' | 'selesai' | 'ditolak'
+export type AspirasiUrgensi = 'rendah' | 'normal' | 'tinggi' | 'mendesak'
+export type AspirasiUnit = 'akademik' | 'fasilitas' | 'keuangan' | 'kemahasiswaan' | 'lainnya'
+
+export interface Aspirasi {
+  id: number
+  user_id: string
+  email_pengirim?: string
+  anonim?: boolean
+  teks_asli: string
+  teks_bersih?: string
+  sentimen: 'positif' | 'netral' | 'negatif'
+  prob_positif: number
+  prob_netral: number
+  prob_negatif: number
+  kata_kunci?: string[]
+  unit: AspirasiUnit
+  urgensi: AspirasiUrgensi
+  status: AspirasiStatus
+  pic_unit?: string
+  catatan_admin?: string
+  tanggal_selesai?: string
+  nomor_tiket?: string
+  waktu_dibuat: string
+  waktu_diubah?: string
+  sla_deadline?: string
+}
+
 export interface StatsData {
   total: number
   positif: number

@@ -7,6 +7,32 @@ export const metadata: Metadata = {
   title: 'Suara Kampus — Pusat Aspirasi Sivitas Akademika',
   description:
     'Portal resmi untuk menyampaikan, memahami, dan menindaklanjuti suara sivitas akademika berbasis data.',
+  icons: {
+    icon: [
+      {
+        url: 'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/arsana-consulting-and-learnig-ecosystem',
+        type: 'image/png',
+      },
+      {
+        url: '/api/favicon',
+        type: 'image/png',
+      },
+      {
+        url: '/icon.png',
+        type: 'image/png',
+      },
+    ],
+    shortcut:
+      'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/arsana-consulting-and-learnig-ecosystem',
+    apple: [
+      {
+        url: 'https://l9qhf677-3000.asse.devtunnels.ms/api/v1/logo/arsana-consulting-and-learnig-ecosystem',
+      },
+      {
+        url: '/apple-icon.png',
+      },
+    ],
+  },
 }
 
 export default function RootLayout({
